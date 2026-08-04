@@ -1,0 +1,80 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "src"
+  ],
+  "//": "Sobras da versão anterior do site (SPA com rotas). Não são importadas por nada e não entram no bundle. Rode ./LIMPAR.sh para apagá-las e depois remova este bloco.",
+  "exclude": [
+    "src/app/router.tsx",
+    "src/app/route-fallback.tsx",
+    "src/pages",
+    "src/features/home",
+    "src/features/services/components",
+    "src/features/portfolio/components",
+    "src/features/portfolio/hooks",
+    "src/features/contact/components",
+    "src/config/navigation.ts",
+    "src/data/media.ts",
+    "src/data/media.generated.ts",
+    "src/data/videos.ts",
+    "src/data/faq.ts",
+    "src/data/about.ts",
+    "src/data/process.ts",
+    "src/data/testimonials.ts",
+    "src/features/case-study",
+    "src/features/behind",
+    "src/features/testimonials",
+    "src/features/instagram",
+    "src/features/packages/duration-ruler.tsx",
+    "src/features/packages/duration-chips.tsx",
+    "src/features/packages/exclusive-services.tsx",
+    "src/features/services/faq.tsx",
+    "src/shared/components/seo",
+    "src/shared/components/ui/section.tsx",
+    "src/shared/components/ui/page-hero.tsx",
+    "src/shared/components/ui/reveal.tsx",
+    "src/shared/components/ui/empty-media.tsx",
+    "src/shared/components/ui/media-placeholder.tsx",
+    "src/shared/components/ui/video-player.tsx",
+    "src/shared/components/ui/section-head.tsx",
+    "src/shared/components/ui/burn-in.tsx",
+    "src/shared/components/ui/marquee.tsx",
+    "src/shared/components/ui/button.tsx",
+    "src/shared/components/layout/header.tsx",
+    "src/shared/components/layout/footer.tsx",
+    "src/shared/components/layout/root-layout.tsx",
+    "src/shared/components/layout/whatsapp-fab.tsx",
+    "src/shared/components/layout/top-bar.tsx",
+    "src/shared/components/layout/timeline-rail.tsx",
+    "src/shared/hooks/use-active-section.ts",
+    "src/shared/lib/image-fallback.ts"
+  ]
+}

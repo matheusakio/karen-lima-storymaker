@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Karen Lima — mockup v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#141010;      /* fundo               */
+    --night-2:#1D1815;    /* bloco alternado     */
+    --cream:#F0E6D8;      /* texto claro         */
+    --warm:#A08D78;       /* texto de apoio      */
+    --gold:#C9A96A;       /* acento (da bandeja) */
+    --line:rgba(240,230,216,.14);
+    --serif:'Cormorant Garamond',Georgia,serif;
+    --sans:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0B0908;font-family:var(--sans);color:var(--cream);-webkit-font-smoothing:antialiased}
+  img{display:block}
+
+  /* chrome do documento */
+  .doc{max-width:1480px;margin:0 auto;padding:44px 22px 110px}
+  .doc h1{font-family:var(--serif);font-size:38px;font-weight:300;margin-bottom:8px}
+  .doc .sub{color:var(--warm);font-size:14px;line-height:1.65;max-width:700px}
+  .tag{display:inline-block;border:1px solid var(--line);color:var(--gold);font-size:10px;
+    letter-spacing:.22em;text-transform:uppercase;padding:7px 13px;margin:34px 0 14px}
+  .note{color:var(--warm);font-size:13.5px;line-height:1.7;max-width:780px;margin:8px 0 20px}
+  .frame{background:var(--night);overflow:hidden}
+  .row{display:grid;grid-template-columns:1fr 310px;gap:26px;align-items:start}
+  @media(max-width:1120px){.row{grid-template-columns:1fr}}
+
+  .sm{font-family:var(--sans);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase}
+  .serif{font-family:var(--serif);font-weight:300}
+
+  /* ---------- ABERTURA ---------- */
+  .hero{position:relative;height:620px;overflow:hidden;background:#000}
+  .hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 24%;
+    filter:saturate(1.02)}
+  .hero .veil{position:absolute;inset:0;
+    background:radial-gradient(120% 80% at 50% 30%,rgba(20,16,16,.12),rgba(20,16,16,.72) 78%)}
+  .hero .center{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:0 30px}
+  .hero .role{color:rgba(240,230,216,.66);margin-bottom:22px}
+  .hero .name{font-family:var(--serif);font-weight:300;font-size:96px;line-height:.92;letter-spacing:.01em}
+  .hero .name em{font-style:italic;color:var(--gold)}
+  .hero .line{font-family:var(--serif);font-size:22px;font-weight:300;line-height:1.5;
+    max-width:430px;margin-top:24px;color:rgba(240,230,216,.86)}
+  .hero .btns{display:flex;gap:14px;margin-top:36px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 30px;
+    font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;transition:.3s}
+  .btn-l{background:var(--cream);color:var(--night)}
+  .btn-g{border:1px solid rgba(240,230,216,.4);color:var(--cream)}
+  .nav{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:center;padding:26px 40px;z-index:5}
+  .nav .logo{font-family:var(--serif);font-size:22px;font-weight:300}
+  .nav ul{display:flex;gap:30px;list-style:none}
+  .nav a{color:rgba(240,230,216,.7);text-decoration:none}
+  .sound{position:absolute;right:40px;bottom:34px;width:44px;height:44px;
+    border:1px solid rgba(240,230,216,.35);display:grid;place-items:center;font-size:13px}
+
+  /* ---------- MANIFESTO (texto sobre imagem — assinatura dela) ---------- */
+  .manifesto{position:relative;height:520px;overflow:hidden}
+  .manifesto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%}
+  .manifesto .veil{position:absolute;inset:0;background:rgba(18,14,12,.52)}
+  .manifesto .txt{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:0 40px}
+  .manifesto p{font-family:var(--serif);font-weight:300;font-size:40px;line-height:1.34;max-width:720px}
+  .manifesto em{font-style:italic;color:var(--gold)}
+
+  /* ---------- TRABALHOS ---------- */
+  .work{padding:96px 40px}
+  .head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:38px}
+  .head h2{font-family:var(--serif);font-weight:300;font-size:56px;line-height:1}
+  .filters{display:flex;gap:24px}
+  .filters span{color:var(--warm);padding-bottom:6px;border-bottom:1px solid transparent}
+  .filters span.on{color:var(--cream);border-color:var(--gold)}
+
+  /* grade assimétrica: um grande + dois menores */
+  .wgrid{display:grid;grid-template-columns:1.55fr 1fr 1fr;gap:14px}
+  .tile{position:relative;overflow:hidden;background:#000}
+  .tile img{width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,1,.3,1)}
+  .tile:hover img{transform:scale(1.04)}
+  .tile .cap{position:absolute;left:0;right:0;bottom:0;padding:22px;
+    background:linear-gradient(to top,rgba(10,8,7,.86),rgba(10,8,7,0))}
+  .tile .cap .t{font-family:var(--serif);font-weight:300;font-size:24px;line-height:1.15}
+  .tile .cap .c{color:rgba(240,230,216,.6);margin-top:6px}
+  .tile.big{aspect-ratio:4/5}
+  .tile.tall{aspect-ratio:9/16}
+  .wgrid2{display:grid;grid-template-columns:1fr 1fr 1.55fr;gap:14px;margin-top:14px}
+
+  /* ---------- SERVIÇOS ---------- */
+  .serv{background:var(--night-2);padding:96px 40px}
+  .srow{display:grid;grid-template-columns:78px 1fr 300px;gap:34px;align-items:center;
+    padding:30px 0;border-top:1px solid var(--line);transition:.4s}
+  .srow:last-child{border-bottom:1px solid var(--line)}
+  .srow .n{font-family:var(--serif);font-size:30px;color:var(--gold);opacity:.5}
+  .srow .nm{font-family:var(--serif);font-weight:300;font-size:38px;line-height:1.05}
+  .srow .ds{color:var(--warm);font-size:14px;line-height:1.7;margin-top:8px}
+  .srow .th{aspect-ratio:16/10;overflow:hidden;opacity:0;transition:.5s}
+  .srow.on .th{opacity:1}
+  .srow.on .nm{color:var(--cream)}
+  .srow .th img{width:100%;height:100%;object-fit:cover}
+
+  /* ---------- INVESTIMENTO (uma opção só) ---------- */
+  .price{padding:96px 40px}
+
+  /* eixo do tempo atravessando as quatro colunas */
+  .axis{position:relative;height:1px;background:rgba(240,230,216,.14);margin:46px 0 0}
+  .axis i{position:absolute;top:0;left:0;height:1px;background:var(--gold);width:37.5%}
+  .axis span{position:absolute;top:-4px;width:7px;height:7px;border-radius:50%;
+    background:var(--night);border:1px solid rgba(240,230,216,.3);transform:translateX(-50%)}
+  .axis span.on{background:var(--gold);border-color:var(--gold);width:9px;height:9px;top:-5px}
+
+  /* faixa contínua: sem caixa, sem canto, só fios verticais */
+  .band{display:grid;grid-template-columns:repeat(4,1fr)}
+  .col{padding:34px 26px 32px;border-left:1px solid var(--line);position:relative;transition:background .4s}
+  .col:first-child{border-left:0;padding-left:0}
+  .col:last-child{padding-right:0}
+  .col:hover{background:rgba(240,230,216,.025)}
+  .col.hi{background:rgba(201,169,106,.07)}
+
+  .col .flag{position:absolute;top:-11px;left:26px;background:var(--gold);color:#141010;
+    font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;padding:4px 9px}
+  .col:first-child .flag{left:0}
+
+  .col .hnum{display:flex;align-items:baseline;gap:8px}
+  .col .hnum b{font-family:var(--serif);font-weight:300;font-size:64px;line-height:.85;color:var(--cream)}
+  .col .hnum span{color:var(--warm);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase}
+  .col.hi .hnum b{color:var(--gold)}
+
+  .col .nm{font-family:var(--serif);font-weight:300;font-size:29px;line-height:1;margin-top:22px}
+  .col .ds{color:var(--warm);font-size:12.5px;line-height:1.65;margin-top:10px;min-height:62px}
+  .col ul{list-style:none;color:var(--warm);font-size:12.5px;line-height:1.55;
+    margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+  .col ul li{position:relative;padding-left:15px;margin-bottom:9px}
+  .col ul li:before{content:"";position:absolute;left:0;top:.7em;width:7px;height:1px;
+    background:var(--gold);opacity:.75}
+
+  .col .pr{font-family:var(--serif);font-weight:300;font-size:46px;line-height:1;margin-top:26px}
+  .col.hi .pr{color:var(--gold)}
+  .col .go{display:block;margin-top:18px;padding-bottom:7px;border-bottom:1px solid rgba(240,230,216,.28);
+    font-size:10px;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;
+    color:var(--cream);transition:.3s}
+  .col .go:hover{border-color:var(--gold);color:var(--gold)}
+  .col.hi .go{border-color:var(--gold);color:var(--gold)}
+
+  /* exclusivos — valor num tarja sólida, não flutuando sobre a imagem */
+  .exc{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:60px}
+  .exc a{text-decoration:none;background:var(--night-2);display:block;overflow:hidden}
+  .exc .im{position:relative;aspect-ratio:16/10;overflow:hidden;background:#000}
+  .exc img{width:100%;height:100%;object-fit:cover;opacity:.78;transition:.6s}
+  .exc a:hover img{opacity:1;transform:scale(1.04)}
+  .exc .bar{display:flex;align-items:baseline;justify-content:space-between;gap:14px;
+    padding:20px 22px;border-top:1px solid var(--line)}
+  .exc .bar .t{font-family:var(--serif);font-weight:300;font-size:25px;color:var(--cream);line-height:1.1}
+  .exc .bar .p{font-family:var(--serif);font-weight:300;font-size:30px;color:var(--gold);white-space:nowrap}
+  .exc .bar .pfx{display:block;color:var(--warm);font-size:9px;letter-spacing:.2em;
+    text-transform:uppercase;margin-bottom:3px;font-family:var(--sans)}
+
+  /* ---------- SOBRE ---------- */
+  .about{display:grid;grid-template-columns:1fr 1fr;min-height:520px}
+  .about .ph{position:relative;overflow:hidden;background:#000}
+  .about .ph img{width:100%;height:100%;object-fit:cover}
+  .about .tx{padding:80px 44px;display:flex;flex-direction:column;justify-content:center}
+  .about p{font-family:var(--serif);font-weight:300;font-size:32px;line-height:1.35}
+  .credits{display:flex;gap:28px;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--warm)}
+
+  /* ---------- CONTATO ---------- */
+  .contact{position:relative;height:520px;overflow:hidden}
+  .contact img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%}
+  .contact .veil{position:absolute;inset:0;background:rgba(14,11,10,.68)}
+  .contact .in{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;text-align:center;padding:0 34px}
+  .contact h2{font-family:var(--serif);font-weight:300;font-size:66px;line-height:1.05;max-width:680px}
+  .contact h2 em{font-style:italic;color:var(--gold)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:32px 0 30px;max-width:640px}
+  .chip{border:1px solid rgba(240,230,216,.28);padding:11px 19px;font-size:10px;
+    letter-spacing:.18em;text-transform:uppercase;color:rgba(240,230,216,.72)}
+  .chip.on{background:var(--cream);color:var(--night);border-color:var(--cream)}
+
+  /* ---------- MOBILE ---------- */
+  .phone{width:310px;background:var(--night);overflow:hidden}
+  .phone .hero{height:540px}
+  .phone .hero .name{font-size:54px}
+  .phone .hero .line{font-size:16px;max-width:250px}
+  .phone .nav{padding:18px 20px}
+  .phone .btns{flex-direction:column;width:100%;padding:0 12px}
+  .phone .btn{width:100%}
+  .phone .sound{right:20px;bottom:22px}
+  .phone .manifesto{height:360px}
+  .phone .manifesto p{font-size:23px}
+  .phone .work,.phone .serv,.phone .price{padding:54px 20px}
+  .phone .head{flex-direction:column;align-items:flex-start;gap:14px}
+  .phone .head h2{font-size:34px}
+  .phone .wgrid,.phone .wgrid2{grid-template-columns:1fr 1fr}
+  .phone .tile.big{aspect-ratio:9/16}
+  .phone .tile .cap .t{font-size:15px}
+  .phone .srow{grid-template-columns:44px 1fr;gap:16px}
+  .phone .srow .th{display:none}
+  .phone .srow .nm{font-size:24px}
+  /* celular: a mesma faixa horizontal, deslizando com snap */
+  .phone .band{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:0;
+    margin:0 -20px;padding:0 20px;scrollbar-width:none}
+  .phone .band::-webkit-scrollbar{display:none}
+  .phone .col{flex:0 0 78%;scroll-snap-align:start;padding:26px 20px 26px;border-left:1px solid var(--line)}
+  .phone .col:first-child{border-left:0;padding-left:0}
+  .phone .col .hnum b{font-size:46px}
+  .phone .col .nm{font-size:24px;margin-top:16px}
+  .phone .col .ds{min-height:0;font-size:12px}
+  .phone .col .pr{font-size:36px;margin-top:20px}
+  .phone .col .flag{left:0}
+  .phone .exc{grid-template-columns:1fr}
+  .phone .exc .bar{padding:16px 18px}
+  .phone .exc .bar .t{font-size:20px}
+  .phone .exc .bar .p{font-size:24px}
+  .phone .about{grid-template-columns:1fr}
+  .phone .about .ph{aspect-ratio:4/5}
+  .phone .about .tx{padding:44px 20px}
+  .phone .about p{font-size:22px}
+  .phone .contact{height:420px}
+  .phone .contact h2{font-size:36px}
+</style>
+</head>
+<body>
+<div class="doc">
+
+  <h1>Karen Lima — mockup v2</h1>
+  <p class="sub">Refeito. Um só tratamento de preço, nenhuma imagem de paciente,
+     e a linguagem tipográfica que ela já usa nos próprios vídeos.</p>
+
+  <div class="tag">O que mudou</div>
+  <p class="note">
+    <strong>Fora todas as fotos de harmonização.</strong> Rosto de paciente em antes/depois
+    não entra — nem no portfólio, nem como destaque.<br><br>
+    <strong>Um só tratamento de preço.</strong> As duas versões anteriores confundiram.<br><br>
+    <strong>Texto sobre a imagem, não ao lado dela.</strong> Era o que faltava para parecer
+    dela: em quase todo vídeo dela há serifada fina, branca, sobreposta. Abertura,
+    manifesto e contato agora são imagem cheia com tipografia por cima.<br><br>
+    <strong>Escuro e quente, não branco.</strong> O dourado saiu da bandeja de café dela,
+    o fundo é o marrom das paredes da clínica.
+  </p>
+
+  <div class="tag">Achei as peças principais</div>
+  <p class="note">
+    Eu estava amostrando um único frame por vídeo, e por isso tinha classificado errado.
+    Amostrando três pontos de cada, apareceram as peças que estão no feed dela:<br><br>
+    <strong>v067</strong> — não é aula de pilates, é um filme autoral:
+    <em>TRANSFORMA / FORMA / CONCEITO</em>, paisagem, mulher flutuando na água, respingo.
+    É o material mais cinematográfico do acervo. Virou a abertura.<br>
+    <strong>v069</strong> — o poema sobre paisagem. Virou o manifesto.<br>
+    <strong>v060</strong> — <em>MÃO NA MASSA · SALA 1/2/3</em>, a micropigmentação do feed.<br>
+    <strong>v001</strong> — contém o <em>MENTORIA … Full Face</em>, que é o post do Arabian Glow.<br>
+    <strong>v056</strong> (Reposição de ferro), <strong>v071</strong> (cabelo),
+    <strong>v049</strong>, <strong>v057</strong> — elegantes e sem cliente identificável.
+  </p>
+
+  <div class="tag">Desktop</div>
+  <div class="row">
+    <div class="frame">
+
+      <section class="hero">
+        <img src="public/media/poster/v067.jpg" alt="">
+        <div class="veil"></div>
+        <nav class="nav">
+          <span class="logo">Karen Lima</span>
+          <ul class="sm">
+            <li><a href="#">Trabalhos</a></li><li><a href="#">Serviços</a></li>
+            <li><a href="#">Investimento</a></li><li><a href="#">Sobre</a></li>
+            <li><a href="#">Contato</a></li>
+          </ul>
+        </nav>
+        <div class="center">
+          <p class="sm role">Filmmaker · Storymaker · Fashion Film</p>
+          <h1 class="name">Karen <em>Lima</em></h1>
+          <p class="line">Vídeos cinematográficos para marcas, eventos e histórias inesquecíveis.</p>
+          <div class="btns">
+            <a class="btn btn-l" href="#">Ver trabalhos</a>
+            <a class="btn btn-g" href="#">Solicitar orçamento</a>
+          </div>
+        </div>
+        <div class="sound">♪</div>
+      </section>
+
+      <section class="manifesto">
+        <img src="public/media/poster/v069.jpg" alt="">
+        <div class="veil"></div>
+        <div class="txt">
+          <p>Mais do que registrar, transformo movimentos, atmosferas<br>
+             e detalhes em <em>histórias feitas para permanecer</em>.</p>
+        </div>
+      </section>
+
+      <section class="work">
+        <div class="head">
+          <h2>Trabalhos</h2>
+          <div class="filters sm">
+            <span class="on">Tudo</span><span>Clínicas</span><span>Eventos</span>
+            <span>Beleza</span><span>Lifestyle</span>
+          </div>
+        </div>
+        <div class="wgrid">
+          <a class="tile big"><img src="public/media/poster/v060.jpg" alt="">
+            <div class="cap"><div class="t">Mão na Massa</div><div class="c sm">Storymaker · 3 salas</div></div></a>
+          <a class="tile tall"><img src="public/media/poster/v001.jpg" alt="">
+            <div class="cap"><div class="t">Mentoria Full Face</div><div class="c sm">Evento · 2026</div></div></a>
+          <a class="tile tall"><img src="public/media/poster/v056.jpg" alt="">
+            <div class="cap"><div class="t">Reposição de ferro</div><div class="c sm">Clínicas · 2026</div></div></a>
+        </div>
+        <div class="wgrid2">
+          <a class="tile tall"><img src="public/media/poster/v071.jpg" alt="">
+            <div class="cap"><div class="t">Beleza · cabelo</div><div class="c sm">Fashion Film · 2026</div></div></a>
+          <a class="tile tall"><img src="public/media/poster/v053.jpg" alt="">
+            <div class="cap"><div class="t">Serviço de mesa</div><div class="c sm">Detalhe · 2026</div></div></a>
+          <a class="tile big"><img src="public/media/poster/v064.jpg" alt="">
+            <div class="cap"><div class="t">Congresso · Direito Administrativo</div><div class="c sm">Eventos · 2026</div></div></a>
+        </div>
+      </section>
+
+      <section class="serv">
+        <div class="head"><h2>Serviços</h2></div>
+        <div class="srow on">
+          <div class="n">01</div>
+          <div><div class="nm">Storymaker</div>
+               <div class="ds">Cobertura em tempo real de eventos, experiências e bastidores.</div></div>
+          <div class="th"><img src="public/media/poster/v054.jpg" alt=""></div>
+        </div>
+        <div class="srow">
+          <div class="n">02</div>
+          <div><div class="nm">Videomaker Mobile</div>
+               <div class="ds">Captação e edição profissional pensadas para redes sociais.</div></div>
+          <div class="th"><img src="public/media/poster/v056.jpg" alt=""></div>
+        </div>
+        <div class="srow">
+          <div class="n">03</div>
+          <div><div class="nm">Fashion Film</div>
+               <div class="ds">Produções visuais para moda, beleza, ensaios e campanhas.</div></div>
+          <div class="th"><img src="public/media/poster/v071.jpg" alt=""></div>
+        </div>
+        <div class="srow">
+          <div class="n">04</div>
+          <div><div class="nm">Conteúdo para Marcas</div>
+               <div class="ds">Vídeos estratégicos para clínicas, empresas e profissionais.</div></div>
+          <div class="th"><img src="public/media/poster/v035.jpg" alt=""></div>
+        </div>
+        <div class="srow">
+          <div class="n">05</div>
+          <div><div class="nm">Cobertura de Eventos</div>
+               <div class="ds">Registro completo com conteúdo cinematográfico e entrega digital.</div></div>
+          <div class="th"><img src="public/media/poster/v064.jpg" alt=""></div>
+        </div>
+      </section>
+
+      <section class="price">
+        <div class="head"><h2>Investimento</h2><span class="sm" style="color:var(--warm)">Brasília — DF</span></div>
+        <div class="axis">
+          <i></i>
+          <span style="left:12.5%"></span>
+          <span class="on" style="left:37.5%"></span>
+          <span style="left:62.5%"></span>
+          <span style="left:87.5%"></span>
+        </div>
+
+        <div class="band">
+          <div class="col">
+            <div class="hnum"><b>2</b><span>horas</span></div>
+            <div class="nm">Signature</div>
+            <div class="ds">Atendimentos, lançamentos, ensaios e produção de conteúdo.</div>
+            <ul><li>Captação profissional</li><li>Bastidores</li>
+                <li>2 a 4 vídeos editados</li><li>Direcionamento criativo</li></ul>
+            <div class="pr">R$ 550</div>
+            <a class="go" href="#">Escolher este pacote</a>
+          </div>
+
+          <div class="col hi">
+            <span class="flag">Mais contratado</span>
+            <div class="hnum"><b>4</b><span>horas</span></div>
+            <div class="nm">Select</div>
+            <div class="ds">Eventos, ativações de marca e produções completas.</div>
+            <ul><li>Captação completa</li><li>Reels editados</li>
+                <li>Bastidores exclusivos</li><li>Conteúdo para redes</li></ul>
+            <div class="pr">R$ 1.000</div>
+            <a class="go" href="#">Escolher este pacote</a>
+          </div>
+
+          <div class="col">
+            <div class="hnum"><b>8</b><span>horas</span></div>
+            <div class="nm">Prestige</div>
+            <div class="ds">Casamentos, eventos corporativos e grandes coberturas.</div>
+            <ul><li>Cobertura completa</li><li>Conteúdo em tempo real</li>
+                <li>Reels premium</li><li>Direção criativa</li></ul>
+            <div class="pr">R$ 1.900</div>
+            <a class="go" href="#">Escolher este pacote</a>
+          </div>
+
+          <div class="col">
+            <div class="hnum"><b>12</b><span>horas</span></div>
+            <div class="nm">Exclusive</div>
+            <div class="ds">Para quem deseja registrar toda a experiência com excelência.</div>
+            <ul><li>Acompanhamento completo</li><li>Conteúdo o evento inteiro</li>
+                <li>Entrega premium</li><li>Atendimento prioritário</li></ul>
+            <div class="pr">R$ 2.800</div>
+            <a class="go" href="#">Escolher este pacote</a>
+          </div>
+        </div>
+
+        <div class="exc">
+          <a>
+            <div class="im"><img src="public/media/poster/v071.jpg" alt=""></div>
+            <div class="bar"><div class="t">Fashion Film</div>
+              <div><span class="pfx">a partir de</span><span class="p">R$ 600</span></div></div>
+          </a>
+          <a>
+            <div class="im"><img src="public/media/poster/v061.jpg" alt=""></div>
+            <div class="bar"><div class="t">Cobertura de Eventos</div>
+              <div><span class="pfx">a partir de</span><span class="p">R$ 700</span></div></div>
+          </a>
+          <a>
+            <div class="im"><img src="public/media/poster/v057.jpg" alt=""></div>
+            <div class="bar"><div class="t">Pacotes Mensais</div>
+              <div><span class="pfx">sob demanda</span><span class="p">Personalizado</span></div></div>
+          </a>
+        </div>
+      </section>
+
+      <section class="about">
+        <div class="ph"><img src="public/media/poster/v049.jpg" alt=""></div>
+        <div class="tx">
+          <p>Karen Lima é filmmaker, storymaker e videomaker mobile em Brasília.
+             Direção criativa, olhar cinematográfico e agilidade para transformar
+             marcas, eventos e experiências em <em style="font-style:italic;color:var(--gold)">conteúdo memorável</em>.</p>
+          <div class="credits sm">
+            <span>Direção</span><span>Captação</span><span>Edição</span>
+            <span style="margin-left:auto">Brasília — DF</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact">
+        <img src="public/media/poster/v057.jpg" alt="">
+        <div class="veil"></div>
+        <div class="in">
+          <h2>Sua próxima história <em>começa aqui</em>.</h2>
+          <div class="chips">
+            <span class="chip on">Storymaker</span><span class="chip">Fashion Film</span>
+            <span class="chip">Evento</span><span class="chip">Conteúdo para marca</span>
+            <span class="chip">Pacote mensal</span><span class="chip">Outro projeto</span>
+          </div>
+          <a class="btn btn-l" href="#">Falar pelo WhatsApp</a>
+        </div>
+      </section>
+
+    </div>
+
+    <div>
+      <div class="tag" style="margin-top:0">Celular</div>
+      <div class="phone">
+        <section class="hero">
+          <img src="public/media/poster/v067.jpg" alt="">
+          <div class="veil"></div>
+          <nav class="nav"><span class="logo">Karen Lima</span><span class="sm" style="color:rgba(240,230,216,.7)">Menu</span></nav>
+          <div class="center">
+            <p class="sm role">Filmmaker · Storymaker</p>
+            <h1 class="name">Karen<br><em>Lima</em></h1>
+            <p class="line">Vídeos cinematográficos para marcas, eventos e histórias inesquecíveis.</p>
+            <div class="btns">
+              <a class="btn btn-l" href="#">Ver trabalhos</a>
+              <a class="btn btn-g" href="#">Orçamento</a>
+            </div>
+          </div>
+          <div class="sound">♪</div>
+        </section>
+
+        <section class="manifesto">
+          <img src="public/media/poster/v069.jpg" alt=""><div class="veil"></div>
+          <div class="txt"><p>Transformo movimentos e detalhes em <em>histórias feitas para permanecer</em>.</p></div>
+        </section>
+
+        <section class="work">
+          <div class="head"><h2>Trabalhos</h2>
+            <div class="filters sm"><span class="on">Tudo</span><span>Clínicas</span><span>Eventos</span></div></div>
+          <div class="wgrid">
+            <a class="tile big"><img src="public/media/poster/v060.jpg" alt="">
+              <div class="cap"><div class="t">Mão na Massa</div><div class="c sm">Story</div></div></a>
+            <a class="tile big"><img src="public/media/poster/v071.jpg" alt="">
+              <div class="cap"><div class="t">Beleza · cabelo</div><div class="c sm">Fashion</div></div></a>
+          </div>
+        </section>
+
+        <section class="price">
+          <div class="head"><h2>Investimento</h2></div>
+          <p class="sm" style="color:var(--warm);margin:6px 0 14px">← arraste →</p>
+          <div class="band">
+            <div class="col hi">
+              <span class="flag">Mais contratado</span>
+              <div class="hnum"><b>4</b><span>horas</span></div>
+              <div class="nm">Select</div>
+              <div class="ds">Eventos, ativações de marca e produções completas.</div>
+              <ul><li>Captação completa</li><li>Reels editados</li><li>Bastidores exclusivos</li></ul>
+              <div class="pr">R$ 1.000</div><a class="go" href="#">Escolher este pacote</a>
+            </div>
+            <div class="col">
+              <div class="hnum"><b>8</b><span>horas</span></div>
+              <div class="nm">Prestige</div>
+              <div class="ds">Casamentos, eventos corporativos e grandes coberturas.</div>
+              <ul><li>Cobertura completa</li><li>Conteúdo em tempo real</li><li>Reels premium</li></ul>
+              <div class="pr">R$ 1.900</div><a class="go" href="#">Escolher este pacote</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="contact">
+          <img src="public/media/poster/v010.jpg" alt=""><div class="veil"></div>
+          <div class="in"><h2>Sua próxima história <em>começa aqui</em>.</h2>
+            <a class="btn btn-l" href="#" style="margin-top:24px">Falar pelo WhatsApp</a></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="tag">Me diga</div>
+  <p class="note">
+    Escuro e quente funciona melhor que o claro anterior?<br>
+    A tipografia sobre a imagem — que é o jeito dela — está no ponto ou exagerada?<br>
+    A grade de trabalhos com um grande e dois estreitos ficou boa?<br>
+    Se algo ainda estiver feio, aponte a seção e eu refaço só ela.
+  </p>
+
+</div>
+</body>
+</html>

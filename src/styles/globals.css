@@ -1,0 +1,119 @@
+@import 'tailwindcss';
+
+/* ==================================================================== *
+ *  KAREN LIMA — tokens do mockup aprovado
+ *  Escuro e quente. Tipografia sobre a imagem, que é o jeito dela.
+ *  Sem canto arredondado, sem sombra, sem gradiente decorativo.
+ * ==================================================================== */
+@theme {
+  --color-night: #141010; /* fundo                */
+  --color-night-2: #1d1815; /* bloco alternado      */
+  --color-cream: #f0e6d8; /* texto claro          */
+  --color-warm: #a08d78; /* texto de apoio       */
+  --color-gold: #c9a96a; /* acento (da bandeja)  */
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  --ease-soft: cubic-bezier(0.2, 1, 0.3, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-night text-cream font-sans antialiased;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button,
+  [role='tab'] {
+    touch-action: manipulation;
+  }
+
+  /* iOS dá zoom em campo com fonte < 16px */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  ::selection {
+    @apply bg-cream text-night;
+  }
+
+  :focus-visible {
+    @apply outline-gold outline-2 outline-offset-4;
+  }
+
+  img,
+  video {
+    display: block;
+  }
+}
+
+/* ==================================================================== *
+ *  Utilitários
+ * ==================================================================== */
+
+/* fio de 1px usado entre colunas e linhas */
+@utility line-t {
+  border-top: 1px solid rgb(240 230 216 / 0.14);
+}
+@utility line-b {
+  border-bottom: 1px solid rgb(240 230 216 / 0.14);
+}
+@utility line-l {
+  border-left: 1px solid rgb(240 230 216 / 0.14);
+}
+
+/* rótulo pequeno em versalete — substitui ícone em todo o site */
+@utility label {
+  @apply font-sans text-[10.5px] tracking-[0.24em] uppercase;
+}
+
+@utility page {
+  @apply mx-auto w-full max-w-[1600px] px-5 sm:px-8 lg:px-10;
+}
+
+@utility safe-b {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* trilho horizontal sem barra de rolagem */
+@utility rail {
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* véu do herói: escurece o centro só o necessário para ler */
+@utility veil-radial {
+  background: radial-gradient(
+    120% 80% at 50% 30%,
+    rgb(20 16 16 / 0.12),
+    rgb(20 16 16 / 0.72) 78%
+  );
+}

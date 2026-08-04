@@ -1,0 +1,109 @@
+import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
+
+import { siteConfig } from '@/config/site';
+import { heroMedia } from '@/data/projects';
+import { useMediaPolicy } from '@/shared/hooks/use-media-policy';
+
+const EASE = [0.2, 1, 0.3, 1] as const;
+
+/**
+ * Abertura: vídeo em tela cheia com a tipografia por cima e centralizada.
+ * Sem card, sem caixa, sem retângulo atrás do título.
+ *
+ * SEM CONTROLE DE SOM, de propósito. O áudio bruto de um clipe é ruído
+ * ambiente e música automática é bloqueada pelos navegadores. O som existe no
+ * modal do projeto, onde a pessoa escolheu assistir.
+ */
+export function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { canAutoplay } = useMediaPolicy();
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !canAutoplay) return;
+    video.play().catch(() => setFailed(true));
+  }, [canAutoplay]);
+
+  return (
+    <section id="abertura" className="relative h-dvh min-h-[560px] overflow-hidden bg-black">
+      <img
+        src={heroMedia.poster}
+        srcSet={`${heroMedia.poster} 900w, ${heroMedia.poster2x} 1600w`}
+        sizes="100vw"
+        alt=""
+        fetchPriority="high"
+        decoding="sync"
+        className="absolute inset-0 h-full w-full object-cover [object-position:50%_26%]"
+      />
+
+      {canAutoplay && !failed && (
+        <video
+          ref={videoRef}
+          src={heroMedia.video}
+          poster={heroMedia.posterFallback}
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-hidden="true"
+          tabIndex={-1}
+          onError={() => setFailed(true)}
+          className="absolute inset-0 h-full w-full object-cover [object-position:50%_26%]"
+        />
+      )}
+
+      <div className="veil-radial absolute inset-0" />
+
+      <div className="page absolute inset-0 flex flex-col items-center justify-center text-center">
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
+          className="label text-cream/65"
+        >
+          {siteConfig.role}
+        </motion.p>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.1, delay: 0.28, ease: EASE }}
+          className="font-serif mt-5 text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.9] font-light"
+        >
+          Karen <em className="text-gold">Lima</em>
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.45, ease: EASE }}
+          className="font-serif text-cream/85 mt-6 max-w-[26ch] text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.45] font-light"
+        >
+          {siteConfig.tagline}
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6, ease: EASE }}
+          className="mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:gap-4"
+        >
+          <a
+            href="#trabalhos"
+            className="bg-cream text-night label hover:bg-gold flex h-12 items-center justify-center px-8 transition-colors duration-400"
+          >
+            Ver trabalhos
+          </a>
+          <a
+            href="#investimento"
+            className="border-cream/40 text-cream label hover:bg-cream hover:text-night flex h-12 items-center justify-center border px-8 transition-colors duration-400"
+          >
+            Solicitar orçamento
+          </a>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
