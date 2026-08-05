@@ -11,6 +11,7 @@
   --color-cream: #f0e6d8; /* texto claro          */
   --color-warm: #a08d78; /* texto de apoio       */
   --color-gold: #c9a96a; /* acento (da bandeja)  */
+  --color-gold-hi: #e6cd95; /* dourado claro — só sobre vídeo/imagem */
 
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -109,11 +110,33 @@
   display: none;
 }
 
-/* véu do herói: escurece o centro só o necessário para ler */
-@utility veil-radial {
-  background: radial-gradient(
-    120% 80% at 50% 30%,
-    rgb(20 16 16 / 0.12),
-    rgb(20 16 16 / 0.72) 78%
-  );
+/**
+ * Véu do herói.
+ *
+ * O vídeo dela tem trechos muito claros — pele, parede bege, luz natural —
+ * e nesses momentos o texto creme simplesmente sumia. Um véu suave não
+ * resolve: precisa garantir contraste no PIOR quadro, não no médio.
+ *
+ * Três camadas somadas:
+ *  · escurecimento geral leve, para nunca estourar
+ *  · faixa horizontal mais escura na altura do texto
+ *  · vinheta nas bordas, que também dá acabamento cinematográfico
+ */
+@utility veil-hero {
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(14 11 10 / 0.55) 0%,
+      rgb(14 11 10 / 0.34) 22%,
+      rgb(14 11 10 / 0.62) 50%,
+      rgb(14 11 10 / 0.78) 100%
+    ),
+    radial-gradient(120% 90% at 50% 45%, rgb(14 11 10 / 0) 30%, rgb(14 11 10 / 0.55) 100%);
+}
+
+/* Sombra de segurança: garante leitura mesmo se o véu falhar num quadro. */
+@utility text-on-media {
+  text-shadow:
+    0 1px 2px rgb(14 11 10 / 0.45),
+    0 2px 18px rgb(14 11 10 / 0.35);
 }

@@ -1,9 +1,10 @@
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { siteConfig } from '@/config/site';
 import { heroMedia } from '@/data/projects';
 import { useMediaPolicy } from '@/shared/hooks/use-media-policy';
+import { cn } from '@/shared/lib/cn';
 
 const EASE = [0.2, 1, 0.3, 1] as const;
 
@@ -16,14 +17,30 @@ const EASE = [0.2, 1, 0.3, 1] as const;
  * modal do projeto, onde a pessoa escolheu assistir.
  */
 export function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const { canAutoplay } = useMediaPolicy();
-  const [failed, setFailed] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  /**
+   * `muted` precisa existir como ATRIBUTO antes do Safari decidir se libera o
+   * autoplay. O React só define a propriedade, e o iPhone recusa. Sem isto o
+   * herói fica congelado no celular.
+   */
+  const attach = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (!node) return;
+    node.muted = true;
+    node.defaultMuted = true;
+    node.setAttribute('muted', '');
+    node.setAttribute('playsinline', '');
+    node.setAttribute('webkit-playsinline', '');
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video || !canAutoplay) return;
-    video.play().catch(() => setFailed(true));
+    video.muted = true;
+    video.play().catch(() => setVisible(false));
   }, [canAutoplay]);
 
   return (
@@ -38,30 +55,35 @@ export function Hero() {
         className="absolute inset-0 h-full w-full object-cover [object-position:50%_26%]"
       />
 
-      {canAutoplay && !failed && (
+      {canAutoplay && (
         <video
-          ref={videoRef}
+          ref={attach}
           src={heroMedia.video}
           poster={heroMedia.posterFallback}
+          autoPlay
           muted
           loop
           playsInline
           preload="auto"
           aria-hidden="true"
           tabIndex={-1}
-          onError={() => setFailed(true)}
-          className="absolute inset-0 h-full w-full object-cover [object-position:50%_26%]"
+          onPlaying={() => setVisible(true)}
+          onError={() => setVisible(false)}
+          className={cn(
+            'absolute inset-0 h-full w-full object-cover transition-opacity duration-700 [object-position:50%_26%]',
+            visible ? 'opacity-100' : 'opacity-0',
+          )}
         />
       )}
 
-      <div className="veil-radial absolute inset-0" />
+      <div className="veil-hero absolute inset-0" />
 
-      <div className="page absolute inset-0 flex flex-col items-center justify-center text-center">
+      <div className="page text-on-media absolute inset-0 flex flex-col items-center justify-center text-center">
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
-          className="label text-cream/65"
+          className="label text-cream/80"
         >
           {siteConfig.role}
         </motion.p>
@@ -72,14 +94,14 @@ export function Hero() {
           transition={{ duration: 1.1, delay: 0.28, ease: EASE }}
           className="font-serif mt-5 text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.9] font-light"
         >
-          Karen <em className="text-gold">Lima</em>
+          Karen <em className="text-gold-hi">Lima</em>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.45, ease: EASE }}
-          className="font-serif text-cream/85 mt-6 max-w-[26ch] text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.45] font-light"
+          className="font-serif text-cream/95 mt-6 max-w-[26ch] text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.45] font-light"
         >
           {siteConfig.tagline}
         </motion.p>

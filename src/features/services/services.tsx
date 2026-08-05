@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { services } from '@/data/services';
 import { ServiceReel } from './service-reel';
@@ -6,18 +6,42 @@ import { useHoverCapable } from '@/shared/hooks/use-hover-capable';
 import { cn } from '@/shared/lib/cn';
 
 /**
- * Capítulos numerados.
+ * Capítulos de serviço.
  *
- * A miniatura é PEQUENA e mora dentro da própria linha, à direita — aparece
- * quando o item entra em foco e some quando sai. Nada de painel grande fixo:
- * o protagonista é a lista, a mídia é a confirmação.
+ * DESKTOP — miniatura grande na própria coluna da grade, sempre presente:
+ * esmaecida nos itens em repouso, cheia no item em foco. Ela precisa continuar
+ * NO FLUXO e VISÍVEL. Quando o item inativo ficava com `opacity-0`, o espaço
+ * continuava reservado e a seção abria vãos escuros enormes; a opacidade
+ * parcial resolve os dois problemas de uma vez.
  *
- * Dentro da miniatura passa uma sequência de peças daquele serviço, não uma
- * imagem parada.
+ * CELULAR — não há hover, e miniatura pequena não mostra nada. A mídia vira
+ * faixa compacta e fixa no topo, e o item ativo é o que estiver no centro da
+ * tela: a pessoa rola e o vídeo acompanha.
  */
 export function Services() {
-  const [activeId, setActiveId] = useState<string | null>(services[0]!.id);
+  const [activeId, setActiveId] = useState(services[0]!.id);
   const canHover = useHoverCapable();
+  const rowsRef = useRef<Map<string, HTMLElement>>(new Map());
+
+  useEffect(() => {
+    if (canHover) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const top = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const id = top?.target.getAttribute('data-service');
+        if (id) setActiveId(id);
+      },
+      { rootMargin: '-45% 0px -45% 0px', threshold: [0, 0.5, 1] },
+    );
+
+    rowsRef.current.forEach((node) => observer.observe(node));
+    return () => observer.disconnect();
+  }, [canHover]);
+
+  const active = services.find((s) => s.id === activeId) ?? services[0]!;
 
   return (
     <section id="servicos" className="bg-night-2 py-20 md:py-28 lg:py-32">
@@ -26,61 +50,70 @@ export function Services() {
           Serviços
         </h2>
 
-        <div className="mt-10 md:mt-14">
+        {/* CELULAR: faixa compacta que acompanha o item no centro da tela.
+            Altura fixa em vez de proporção — as peças dela são 9:16 com
+            tipografia queimada embaixo, e uma caixa alta empurrava a lista
+            para fora da tela. */}
+        <div className="sticky top-16 z-10 mt-7 md:hidden">
+          <ServiceReel gallery={active.gallery} active className="h-[30dvh] w-full" />
+          <p className="label text-gold bg-night-2 py-2.5">{active.name}</p>
+        </div>
+
+        <div className="mt-4 md:mt-14">
           {services.map((service) => {
             const isActive = service.id === activeId;
 
             return (
-              <button
+              <div
                 key={service.id}
-                type="button"
-                onMouseEnter={canHover ? () => setActiveId(service.id) : undefined}
-                onFocus={() => setActiveId(service.id)}
-                onClick={() => setActiveId(isActive ? null : service.id)}
-                aria-current={isActive}
-                className={cn(
-                  'line-t grid w-full items-center gap-4 py-6 text-left last:line-b',
-                  'grid-cols-[38px_1fr_92px] md:grid-cols-[64px_1fr_190px] md:gap-8 md:py-7',
-                  'transition-colors duration-400',
-                )}
+                data-service={service.id}
+                ref={(node) => {
+                  if (node) rowsRef.current.set(service.id, node);
+                  else rowsRef.current.delete(service.id);
+                }}
               >
-                <span
+                <button
+                  type="button"
+                  onMouseEnter={canHover ? () => setActiveId(service.id) : undefined}
+                  onFocus={() => setActiveId(service.id)}
+                  onClick={() => setActiveId(service.id)}
+                  aria-current={isActive}
                   className={cn(
-                    'font-serif self-start text-xl leading-none font-light transition-colors duration-400 md:text-3xl',
-                    isActive ? 'text-gold' : 'text-gold/40',
+                    'line-t grid w-full items-center gap-5 py-6 text-left last:line-b',
+                    'grid-cols-1 md:grid-cols-[1fr_180px] md:gap-10 md:py-7',
+                    'transition-colors duration-400',
                   )}
                 >
-                  {service.number}
-                </span>
+                  <span className="flex flex-col gap-2">
+                    <span
+                      className={cn(
+                        'font-serif text-[clamp(1.35rem,3.2vw,2.2rem)] leading-[1.05] font-light transition-colors duration-400',
+                        isActive ? 'text-cream' : 'text-cream/60',
+                      )}
+                    >
+                      {service.name}
+                    </span>
+                    <span className="text-warm text-[12.5px] leading-[1.65] font-light md:text-[13.5px]">
+                      {service.description}
+                    </span>
+                  </span>
 
-                <span className="flex flex-col gap-1.5">
+                  {/* Miniatura grande, sempre presente. Esmaecida em repouso,
+                      cheia em foco — nunca `opacity-0`, senão volta o vão. */}
                   <span
                     className={cn(
-                      'font-serif text-[clamp(1.25rem,3.2vw,2.2rem)] leading-[1.05] font-light transition-colors duration-400',
-                      isActive ? 'text-cream' : 'text-cream/65',
+                      'hidden aspect-[4/5] w-full overflow-hidden transition-opacity duration-500 md:block',
+                      isActive ? 'opacity-100' : 'opacity-30',
                     )}
                   >
-                    {service.name}
+                    <ServiceReel
+                      gallery={service.gallery}
+                      active={isActive && canHover}
+                      className="h-full w-full"
+                    />
                   </span>
-                  <span className="text-warm text-[12.5px] leading-[1.65] font-light md:text-[13.5px]">
-                    {service.description}
-                  </span>
-                </span>
-
-                {/* miniatura pequena, dentro da linha */}
-                <span
-                  className={cn(
-                    'aspect-[4/5] w-full overflow-hidden transition-all duration-500',
-                    isActive ? 'opacity-100' : 'opacity-0 md:opacity-25',
-                  )}
-                >
-                  <ServiceReel
-                    gallery={service.gallery}
-                    active={isActive}
-                    className="h-full w-full"
-                  />
-                </span>
-              </button>
+                </button>
+              </div>
             );
           })}
         </div>

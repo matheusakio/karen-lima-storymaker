@@ -55,20 +55,24 @@ export function Packages() {
         ))}
       </div>
 
-      <div className="grid md:grid-cols-4">
+      <div className="mt-6 grid md:mt-0 md:grid-cols-4">
         {pricingPackages.map((pkg, index) => (
           <div
             key={pkg.id}
             className={cn(
-              'relative px-0 py-8 transition-colors duration-400 md:px-6 md:py-9',
-              // fio entre colunas no desktop, entre linhas no celular
-              index > 0 && 'line-t md:border-t-0 md:line-l',
+              'relative transition-colors duration-400',
+              // respiro interno próprio no celular, para nada encostar na borda
+              'px-5 py-9 sm:px-6 md:px-6 md:py-10',
+              // celular: fio entre linhas. desktop: fio entre colunas.
+              index > 0 && 'line-t md:border-t-0',
+              index > 0 && 'md:line-l',
               'md:first:pl-0 md:last:pr-0',
-              pkg.mostBooked && 'bg-[rgb(201_169_106/0.07)]',
+              // o realce sangra até a borda da tela só no celular
+              pkg.mostBooked && 'bg-[rgb(201_169_106/0.07)] -mx-5 sm:-mx-8 md:mx-0',
             )}
           >
             {pkg.mostBooked && (
-              <span className="bg-gold text-night absolute -top-[11px] left-0 px-2.5 py-1 text-[8.5px] tracking-[0.2em] uppercase md:left-6">
+              <span className="bg-gold text-night absolute top-0 left-5 -translate-y-1/2 px-2.5 py-1 text-[8.5px] tracking-[0.2em] uppercase sm:left-6 md:left-6">
                 Mais contratado
               </span>
             )}

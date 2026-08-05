@@ -23,7 +23,8 @@ export function About() {
         posterFallback={aboutMedia.posterFallback}
         sizes="(max-width: 768px) 100vw, 50vw"
         alt="Karen Lima em produção"
-        className="aspect-[4/5] w-full md:aspect-auto md:h-full md:min-h-[520px]"
+        objectPosition="50% 32%"
+        className="aspect-[5/4] w-full sm:aspect-[4/3] md:aspect-auto md:h-full md:min-h-[520px]"
       />
 
       <div className="flex flex-col justify-center px-5 py-16 sm:px-8 md:px-12 lg:px-16">

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useHoverCapable } from '@/shared/hooks/use-hover-capable';
 import { useMediaPolicy } from '@/shared/hooks/use-media-policy';
@@ -24,13 +24,22 @@ interface AutoVideoProps {
 /**
  * Vídeo que toca sozinho, mudo e em loop.
  *
- * Regras:
- * · Toca ao entrar na tela, com teto de simultâneos (ver `use-video-pool`).
- * · No desktop, passar o mouse força a reprodução na hora — se estava
- *   esperando vaga, fura a fila. Assim nada fica parado sob o cursor.
- * · Pausa ao sair da tela e devolve a vaga.
- * · Se o autoplay for bloqueado, ou houver `prefers-reduced-motion` ou
- *   economia de dados, fica a capa — sem quadro preto e sem erro.
+ * ── AUTOPLAY NO CELULAR ───────────────────────────────────────────────
+ * O iOS só permite autoplay quando o elemento está `muted` E `playsinline`
+ * NO MOMENTO em que o carregamento começa. Duas armadilhas aqui:
+ *
+ * 1. O React define `muted` como PROPRIEDADE, não como atributo HTML. O
+ *    Safari lê o atributo ao montar o elemento, vê um vídeo com som e recusa
+ *    o autoplay. Por isso o `ref` abaixo escreve `muted` e `playsInline`
+ *    imperativamente antes de qualquer tentativa de tocar.
+ *
+ * 2. Chamar `.play()` só pelo JavaScript é menos confiável que o atributo
+ *    `autoplay` declarativo. Usamos os dois.
+ *
+ * Mesmo assim o autoplay é bloqueado no Modo de Baixo Consumo do iPhone, e
+ * não há como contornar. Nesse caso o componente mostra um indicador de toque
+ * discreto — o vídeo passa a tocar ao tocar na tela, e o site não parece
+ * quebrado.
  */
 export function AutoVideo({
   id,
@@ -46,11 +55,11 @@ export function AutoVideo({
   objectPosition,
   priority = false,
 }: AutoVideoProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const { canAutoplay } = useMediaPolicy();
   const canHover = useHoverCapable();
   const [ready, setReady] = useState(false);
-  const [failed, setFailed] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   const { ref, canPlay, near, forcePlay } = useVideoPool<HTMLDivElement>(id, {
     threshold,
@@ -58,21 +67,52 @@ export function AutoVideo({
     priority: always,
   });
 
-  const mounted = canAutoplay && !failed && (always || near);
-  const shouldPlay = canAutoplay && !failed && canPlay;
+  const mounted = canAutoplay && (always || near);
+  const shouldPlay = canAutoplay && canPlay;
+
+  /**
+   * Garante `muted`/`playsInline` como ATRIBUTOS antes de o Safari decidir
+   * se permite autoplay. Sem isso, o vídeo fica congelado no iPhone.
+   */
+  const attachVideo = useCallback((node: HTMLVideoElement | null) => {
+    videoRef.current = node;
+    if (!node) return;
+    node.muted = true;
+    node.defaultMuted = true;
+    node.setAttribute('muted', '');
+    node.setAttribute('playsinline', '');
+    node.setAttribute('webkit-playsinline', '');
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-    if (shouldPlay) video.play().catch(() => setFailed(true));
-    else video.pause();
-  }, [shouldPlay]);
+
+    if (shouldPlay) {
+      video.muted = true;
+      const attempt = video.play();
+      if (attempt) {
+        attempt.then(() => setBlocked(false)).catch(() => setBlocked(true));
+      }
+    } else {
+      video.pause();
+    }
+  }, [shouldPlay, mounted]);
+
+  /** Toque manual: única saída quando o sistema bloqueia o autoplay. */
+  const playByTouch = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.play().then(() => setBlocked(false)).catch(() => undefined);
+  }, []);
 
   return (
     <div
       ref={ref}
       className={cn('relative overflow-hidden bg-black', className)}
       onMouseEnter={canHover && canAutoplay ? forcePlay : undefined}
+      onTouchStart={blocked ? playByTouch : undefined}
     >
       <img
         src={poster}
@@ -87,9 +127,10 @@ export function AutoVideo({
 
       {mounted && (
         <video
-          ref={videoRef}
+          ref={attachVideo}
           src={src}
           poster={posterFallback ?? poster}
+          autoPlay
           muted
           loop
           playsInline
@@ -97,13 +138,26 @@ export function AutoVideo({
           aria-hidden="true"
           tabIndex={-1}
           onCanPlay={() => setReady(true)}
-          onError={() => setFailed(true)}
+          onPlaying={() => setBlocked(false)}
+          onError={() => setBlocked(true)}
           className={cn(
             'absolute inset-0 h-full w-full object-cover transition-opacity duration-500',
-            ready && shouldPlay ? 'opacity-100' : 'opacity-0',
+            ready && shouldPlay && !blocked ? 'opacity-100' : 'opacity-0',
           )}
           style={objectPosition ? { objectPosition } : undefined}
         />
+      )}
+
+      {/* Bloqueado pelo sistema (Modo de Baixo Consumo): sinaliza que dá toque */}
+      {blocked && (
+        <span
+          className="border-cream/50 text-cream/90 pointer-events-none absolute right-2.5 bottom-2.5 grid size-8 place-items-center rounded-full border backdrop-blur-sm"
+          aria-hidden="true"
+        >
+          <svg viewBox="0 0 24 24" className="ml-0.5 size-3 fill-current">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        </span>
       )}
     </div>
   );

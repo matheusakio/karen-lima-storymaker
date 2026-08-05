@@ -17,8 +17,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Só liste aqui pacotes que existem em `dependencies`. Um nome
-        // sobrando quebra o build num `npm ci` limpo (Vercel/Netlify) mesmo
-        // que passe local, porque o node_modules antigo ainda o tinha.
+        // sobrando quebra o build num `npm ci` limpo mesmo passando local,
+        // porque o node_modules antigo ainda o tinha.
         manualChunks: {
           react: ['react', 'react-dom'],
           motion: ['motion'],

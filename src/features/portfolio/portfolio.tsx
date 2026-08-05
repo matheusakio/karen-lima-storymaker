@@ -16,9 +16,22 @@ import { cn } from '@/shared/lib/cn';
 type Filter = Category | 'all';
 
 /**
- * Grade editorial assimétrica: um módulo largo (4:5) ao lado de dois estreitos
- * (9:16), alternando o lado a cada fileira. Nunca alinha em linhas iguais —
- * é o oposto da grade do Instagram.
+ * Alturas dos módulos da cascata.
+ * Cinco degraus em vez de dois: com só duas alturas o empacotamento voltava a
+ * parecer grade regular.
+ */
+const HEIGHTS: Record<Project['shape'], string> = {
+  square: 'aspect-[1/1]',
+  wide: 'aspect-[4/5]',
+  mid: 'aspect-[3/4]',
+  tall: 'aspect-[9/16]',
+  xtall: 'aspect-[2/3.4]',
+};
+
+/**
+ * Portfólio em cascata de alturas variadas.
+ * Nunca alinha em fileiras — é o oposto da grade do Instagram — e, por usar
+ * `columns` em vez de CSS Grid, também nunca deixa célula vazia.
  */
 export function Portfolio() {
   const [filter, setFilter] = useState<Filter>('all');
@@ -57,7 +70,9 @@ export function Portfolio() {
                 onClick={() => setFilter(option.key)}
                 className={cn(
                   'label h-11 shrink-0 border-b whitespace-nowrap transition-colors',
-                  active ? 'border-gold text-cream' : 'text-warm hover:text-cream border-transparent',
+                  active
+                    ? 'border-gold text-cream'
+                    : 'text-warm hover:text-cream border-transparent',
                 )}
               >
                 {option.label}
@@ -67,20 +82,26 @@ export function Portfolio() {
         </div>
       </div>
 
-      <div className="mt-10 grid grid-cols-2 gap-3 md:mt-14 md:grid-cols-4 md:gap-3.5">
-        {visible.map((project, index) => {
-          // módulo largo ocupa duas colunas; alterna o lado a cada fileira
-          const wide = project.shape === 'wide';
+      {/* Colunas em cascata, não CSS Grid.
+          A grade queria que as fileiras fechassem: com peças de alturas
+          diferentes e número que não divide, sempre sobrava um vão escuro.
+          `columns` empacota alturas variadas preenchendo de cima para baixo —
+          buraco não acontece, seja qual for a quantidade ou o filtro ativo.
+          É o que permite manter os tamanhos diferentes que você gostou. */}
+      <div className="mt-10 columns-2 gap-3 md:mt-14 md:columns-3 md:gap-4">
+        {visible.map((project) => {
+          const height = HEIGHTS[project.shape];
+
           return (
             <article
               key={project.id}
-              className={cn('group', wide && 'col-span-2', index % 6 === 3 && 'md:col-start-1')}
+              className="group mb-3 break-inside-avoid md:mb-4"
             >
               <button
                 type="button"
                 onClick={() => setOpen(project)}
                 aria-label={`Abrir ${project.title}`}
-                className="relative block w-full text-left"
+                className="relative block w-full overflow-hidden text-left"
               >
                 <AutoVideo
                   id={project.id}
@@ -88,16 +109,18 @@ export function Portfolio() {
                   poster={project.poster}
                   poster2x={project.poster2x}
                   posterFallback={project.posterFallback}
-                  sizes={wide ? '(max-width: 768px) 100vw, 50vw' : '(max-width: 768px) 50vw, 25vw'}
+                  sizes="(max-width: 768px) 50vw, 33vw"
                   alt={project.title}
                   className={cn(
                     'w-full transition-transform duration-[900ms] ease-[var(--ease-soft)] md:group-hover:scale-[1.02]',
-                    wide ? 'aspect-[4/5] md:aspect-[16/11]' : 'aspect-[9/16]',
+                    height,
                   )}
                 />
 
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgb(10_8_7/0.86)] to-transparent p-4 md:p-5">
-                  <h3 className="font-serif text-[clamp(1rem,2vw,1.5rem)] leading-tight font-light">
+                {/* Legenda com respiro maior: as peças dela têm tipografia
+                  queimada no rodapé do quadro e o texto do site colava nela. */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgb(10_8_7/0.92)] via-[rgb(10_8_7/0.55)] to-transparent px-4 pt-12 pb-5 md:px-5 md:pb-6">
+                  <h3 className="font-serif text-[clamp(1rem,1.8vw,1.4rem)] leading-tight font-light">
                     {project.title}
                   </h3>
                   <p className="label text-cream/60 mt-1.5 text-[9.5px]">

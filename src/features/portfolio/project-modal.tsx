@@ -66,10 +66,13 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
               onClick={(e) => e.stopPropagation()}
               className="mt-5 flex flex-1 flex-col gap-8 md:flex-row md:gap-14"
             >
-              <div className="mx-auto aspect-[9/16] h-[58dvh] w-auto shrink-0 overflow-hidden bg-black md:h-[76dvh]">
+              {/* `object-contain` e altura contida: as peças dela têm
+                  tipografia queimada no rodapé do quadro, e qualquer corte
+                  come o título. Melhor sobrar tarja preta que perder texto. */}
+              <div className="mx-auto aspect-[9/16] h-[54dvh] w-auto shrink-0 overflow-hidden bg-black sm:h-[62dvh] md:h-[76dvh]">
                 <video
                   src={project.fullVideo}
-                  poster={project.poster}
+                  poster={project.posterFallback}
                   controls
                   autoPlay={canAutoplay}
                   playsInline
