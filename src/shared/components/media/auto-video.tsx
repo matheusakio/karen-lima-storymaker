@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { useHoverCapable } from '@/shared/hooks/use-hover-capable';
 import { useMediaPolicy } from '@/shared/hooks/use-media-policy';
 import { useVideoPool } from '@/shared/hooks/use-video-pool';
 import { cn } from '@/shared/lib/cn';
+import { useVideoAutoplay } from './use-video-autoplay';
 
 interface AutoVideoProps {
   id: string;
@@ -23,23 +24,7 @@ interface AutoVideoProps {
 
 /**
  * Vídeo que toca sozinho, mudo e em loop, ao entrar na tela.
- *
- * ── POR QUE ISTO É MAIS COMPLICADO DO QUE PARECE ──────────────────────
- *
- * 1. ATRIBUTO, NÃO PROPRIEDADE. O React define `muted` como propriedade do
- *    elemento. O Safari lê o ATRIBUTO ao montar, vê um vídeo com som e recusa
- *    o autoplay. O `ref` abaixo escreve `muted` e `playsinline` à mão.
- *
- * 2. `play()` PODE FALHAR SEM SER BLOQUEIO. Se ainda não há dados no buffer, a
- *    promessa é rejeitada — e isso não significa que o navegador proibiu, só
- *    que era cedo demais. A versão anterior tratava a primeira rejeição como
- *    bloqueio permanente: acendia um ícone de play e deixava o vídeo invisível
- *    para sempre. Agora cada rejeição só agenda nova tentativa nos eventos
- *    `loadeddata` e `canplay`.
- *
- * 3. SEM ÍCONE DE PLAY. Se o sistema realmente proibir (Modo de Baixo Consumo
- *    do iPhone), fica só a capa. Uma imagem parada e bonita passa por escolha;
- *    um botão de play que não some passa por defeito.
+ * A parte difícil — convencer o iOS a tocar — vive em `useVideoAutoplay`.
  */
 export function AutoVideo({
   id,
@@ -55,7 +40,6 @@ export function AutoVideo({
   objectPosition,
   priority = false,
 }: AutoVideoProps) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const { canAutoplay } = useMediaPolicy();
   const canHover = useHoverCapable();
   const [playing, setPlaying] = useState(false);
@@ -69,44 +53,14 @@ export function AutoVideo({
   const mounted = canAutoplay && (always || near);
   const shouldPlay = canAutoplay && canPlay;
 
-  const attachVideo = useCallback((node: HTMLVideoElement | null) => {
-    videoRef.current = node;
-    if (!node) return;
-    node.muted = true;
-    node.defaultMuted = true;
-    node.setAttribute('muted', '');
-    node.setAttribute('playsinline', '');
-    node.setAttribute('webkit-playsinline', '');
-  }, []);
-
-  /** Tenta tocar. Falha aqui não é definitiva — os eventos de mídia repetem. */
-  const tryPlay = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = true;
-    const attempt = video.play();
-    if (attempt) attempt.catch(() => undefined);
-  }, []);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (shouldPlay) {
-      tryPlay();
-    } else {
-      video.pause();
-      setPlaying(false);
-    }
-  }, [shouldPlay, mounted, tryPlay]);
+  const { attach, play } = useVideoAutoplay(mounted && shouldPlay);
 
   return (
     <div
       ref={ref}
       className={cn('relative overflow-hidden bg-black', className)}
       onMouseEnter={canHover && canAutoplay ? forcePlay : undefined}
-      /* Último recurso: se o sistema proibiu, o primeiro toque na tela libera. */
-      onTouchStart={!playing ? tryPlay : undefined}
+      onTouchStart={!playing ? play : undefined}
     >
       <img
         src={poster}
@@ -121,20 +75,18 @@ export function AutoVideo({
 
       {mounted && (
         <video
-          ref={attachVideo}
-          src={src}
+          ref={attach}
           poster={posterFallback ?? poster}
           autoPlay
           muted
           loop
           playsInline
-          /* `auto`, não `metadata`: o elemento só é montado quando já está
-             perto da tela, e sem dados no buffer o play é rejeitado. */
           preload="auto"
           aria-hidden="true"
           tabIndex={-1}
-          onLoadedData={() => shouldPlay && tryPlay()}
-          onCanPlay={() => shouldPlay && tryPlay()}
+          onLoadedMetadata={play}
+          onLoadedData={play}
+          onCanPlay={play}
           onPlaying={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
           className={cn(
@@ -142,7 +94,11 @@ export function AutoVideo({
             playing ? 'opacity-100' : 'opacity-0',
           )}
           style={objectPosition ? { objectPosition } : undefined}
-        />
+        >
+          {/* `<source>` em vez do atributo `src`: com o src definido depois da
+              criação do elemento, o Safari às vezes não inicia o carregamento. */}
+          <source src={src} type="video/mp4" />
+        </video>
       )}
     </div>
   );

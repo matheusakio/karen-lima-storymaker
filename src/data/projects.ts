@@ -193,6 +193,9 @@ export const projects: readonly Project[] = [
  */
 export const heroMedia = {
   video: `${M}/hero/loop.mp4`,
+  /** 720px e 10s: no celular o arquivo grande demorava a bufferizar e o
+      Safari desistia antes de começar. */
+  videoMobile: `${M}/hero/loop-mobile.mp4`,
   poster: `${M}/hero/poster.webp`,
   poster2x: `${M}/hero/poster@2x.webp`,
   posterFallback: `${M}/hero/poster.jpg`,

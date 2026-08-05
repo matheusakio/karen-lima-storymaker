@@ -11,9 +11,20 @@ interface ProjectModalProps {
   onClose: () => void;
 }
 
+const EASE = [0.2, 1, 0.3, 1] as const;
+
 /**
- * O vídeo completo só existe aqui dentro — é montado ao abrir e desmontado ao
- * fechar, então nada pesado entra no primeiro carregamento da página.
+ * Abertura do projeto.
+ *
+ * Enxuta de propósito: quem clicou quer ver o filme, não ler uma ficha. Saíram
+ * a tabela de metadados e a duração — o vídeo já mostra o tempo dele. Restam o
+ * título, uma linha de contexto e, quando existe, uma frase sobre a peça.
+ *
+ * A entrada é encenada: o fundo escurece, o vídeo cresce de leve a partir do
+ * centro e o texto sobe depois — três tempos em vez de tudo aparecendo junto.
+ *
+ * O vídeo completo só existe aqui dentro, montado ao abrir e desmontado ao
+ * fechar; nada pesado entra no carregamento da página.
  */
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -39,75 +50,67 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-night fixed inset-0 z-[70] overflow-y-auto"
+          transition={{ duration: 0.35, ease: EASE }}
+          className="fixed inset-0 z-[70] overflow-y-auto bg-[rgb(10_8_7/0.97)] backdrop-blur-xl"
           onClick={onClose}
         >
-          <div className="page flex min-h-full flex-col py-5 md:py-8">
-            <div className="flex items-center justify-between">
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="text-cream/60 hover:text-cream fixed top-4 right-4 z-10 grid size-11 place-items-center transition-colors md:top-6 md:right-6"
+          >
+            <X className="size-5" />
+          </button>
+
+          <div
+            className="flex min-h-full flex-col items-center justify-center px-5 py-16 md:py-20"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.94 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.55, ease: EASE }}
+              /* `object-contain`: as peças dela têm tipografia queimada no
+                 rodapé do quadro, e qualquer corte come o título. */
+              className="aspect-[9/16] h-[56dvh] w-auto overflow-hidden bg-black sm:h-[64dvh] md:h-[72dvh]"
+            >
+              <video
+                src={project.fullVideo}
+                poster={project.posterFallback}
+                controls
+                autoPlay={canAutoplay}
+                loop
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-contain"
+              />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.18, ease: EASE }}
+              className="mt-7 flex max-w-lg flex-col items-center text-center"
+            >
               <span className="label text-gold">
                 {CATEGORIES[project.category]} · {project.year}
               </span>
-              <button
-                ref={closeRef}
-                type="button"
-                onClick={onClose}
-                aria-label="Fechar"
-                className="text-cream hover:text-gold grid size-11 place-items-center transition-colors"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.985 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, ease: [0.2, 1, 0.3, 1] }}
-              onClick={(e) => e.stopPropagation()}
-              className="mt-5 flex flex-1 flex-col gap-8 md:flex-row md:gap-14"
-            >
-              {/* `object-contain` e altura contida: as peças dela têm
-                  tipografia queimada no rodapé do quadro, e qualquer corte
-                  come o título. Melhor sobrar tarja preta que perder texto. */}
-              <div className="mx-auto aspect-[9/16] h-[54dvh] w-auto shrink-0 overflow-hidden bg-black sm:h-[62dvh] md:h-[76dvh]">
-                <video
-                  src={project.fullVideo}
-                  poster={project.posterFallback}
-                  controls
-                  autoPlay={canAutoplay}
-                  loop
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full object-contain"
-                />
-              </div>
+              <h2 className="font-serif text-cream mt-3 text-[clamp(1.6rem,4vw,2.6rem)] leading-tight font-normal">
+                {project.title}
+              </h2>
 
-              <div className="flex max-w-sm flex-col gap-5 md:pt-6">
-                <h2 className="font-serif text-3xl leading-tight font-light md:text-5xl">
-                  {project.title}
-                </h2>
+              {project.description && (
+                <p className="text-warm mt-4 text-[0.95rem] leading-[1.7] font-light">
+                  {project.description}
+                </p>
+              )}
 
-                {project.description && (
-                  <p className="text-warm text-[0.95rem] leading-[1.75] font-light">
-                    {project.description}
-                  </p>
-                )}
-
-                <dl className="flex flex-col">
-                  {[
-                    ['Categoria', CATEGORIES[project.category]],
-                    ['Ano', String(project.year)],
-                    ['Local', project.location],
-                    ['Serviços', project.services.join(' · ')],
-                    ['Duração', project.durationLabel],
-                  ].map(([label, value]) => (
-                    <div key={label} className="line-b grid grid-cols-[6.5rem_1fr] gap-4 py-3">
-                      <dt className="label text-warm">{label}</dt>
-                      <dd className="text-cream text-sm font-light">{value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
+              <span className="label text-warm/70 mt-5 text-[9.5px]">
+                {project.services.join(' · ')}
+              </span>
             </motion.div>
           </div>
         </motion.div>

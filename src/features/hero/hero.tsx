@@ -1,8 +1,10 @@
 import { motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 import { siteConfig } from '@/config/site';
 import { heroMedia } from '@/data/projects';
+import { useVideoAutoplay } from '@/shared/components/media/use-video-autoplay';
+import { useIsDesktop } from '@/shared/hooks/use-media-query';
 import { useMediaPolicy } from '@/shared/hooks/use-media-policy';
 import { cn } from '@/shared/lib/cn';
 
@@ -17,37 +19,10 @@ const EASE = [0.2, 1, 0.3, 1] as const;
  * modal do projeto, onde a pessoa escolheu assistir.
  */
 export function Hero() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
   const { canAutoplay } = useMediaPolicy();
+  const isDesktop = useIsDesktop();
   const [visible, setVisible] = useState(false);
-
-  /**
-   * `muted` precisa existir como ATRIBUTO antes do Safari decidir se libera o
-   * autoplay. O React só define a propriedade, e o iPhone recusa. Sem isto o
-   * herói fica congelado no celular.
-   */
-  const attach = useCallback((node: HTMLVideoElement | null) => {
-    videoRef.current = node;
-    if (!node) return;
-    node.muted = true;
-    node.defaultMuted = true;
-    node.setAttribute('muted', '');
-    node.setAttribute('playsinline', '');
-    node.setAttribute('webkit-playsinline', '');
-  }, []);
-
-  /** Falha aqui não é definitiva: os eventos de mídia repetem a tentativa. */
-  const tryPlay = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = true;
-    const attempt = video.play();
-    if (attempt) attempt.catch(() => undefined);
-  }, []);
-
-  useEffect(() => {
-    if (canAutoplay) tryPlay();
-  }, [canAutoplay, tryPlay]);
+  const { attach, play } = useVideoAutoplay(canAutoplay);
 
   return (
     <section id="abertura" className="relative h-dvh min-h-[560px] overflow-hidden bg-black">
@@ -64,7 +39,6 @@ export function Hero() {
       {canAutoplay && (
         <video
           ref={attach}
-          src={heroMedia.video}
           poster={heroMedia.posterFallback}
           autoPlay
           muted
@@ -73,15 +47,18 @@ export function Hero() {
           preload="auto"
           aria-hidden="true"
           tabIndex={-1}
-          onLoadedData={tryPlay}
-          onCanPlay={tryPlay}
+          onLoadedMetadata={play}
+          onLoadedData={play}
+          onCanPlay={play}
           onPlaying={() => setVisible(true)}
           onPause={() => setVisible(false)}
           className={cn(
             'absolute inset-0 h-full w-full object-cover transition-opacity duration-700 [object-position:50%_26%]',
             visible ? 'opacity-100' : 'opacity-0',
           )}
-        />
+        >
+          <source src={isDesktop ? heroMedia.video : heroMedia.videoMobile} type="video/mp4" />
+        </video>
       )}
 
       <div className="veil-hero absolute inset-0" />

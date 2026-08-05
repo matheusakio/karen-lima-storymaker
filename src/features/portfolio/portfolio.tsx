@@ -113,7 +113,7 @@ export function Portfolio() {
                       {project.title}
                     </h3>
                     <p className="label text-cream/80 mt-1.5 text-[9.5px] font-medium">
-                      {CATEGORIES[project.category]} · {project.durationLabel}
+                      {CATEGORIES[project.category]}
                     </p>
                   </div>
                 </button>

@@ -37,19 +37,30 @@ export function Services() {
   );
 }
 
-/** Empilhado: cada bloco tem o tempo que a pessoa der a ele. */
+/**
+ * Empilhado e COMPACTO.
+ *
+ * Cinco blocos com mídia grande faziam a seção ocupar telas e telas. Aqui a
+ * mídia é uma faixa estreita ao lado do texto: cabem dois ou três serviços por
+ * tela, a pessoa entende a lista de uma vez e ainda vê movimento em cada um.
+ */
 function ServicesMobile() {
   return (
-    <div className="mt-8 flex flex-col gap-10">
+    <div className="mt-6">
       {services.map((service) => (
-        <article key={service.id}>
-          <ServiceReel gallery={service.gallery} className="aspect-[4/3] w-full" />
-          <h3 className="font-serif text-cream mt-4 text-[1.6rem] leading-none font-light">
-            {service.name}
-          </h3>
-          <p className="text-warm mt-2 text-[13px] leading-[1.65] font-light">
-            {service.description}
-          </p>
+        <article key={service.id} className="line-t flex items-center gap-4 py-5 last:line-b">
+          <ServiceReel
+            gallery={service.gallery}
+            className="aspect-[3/4] w-[84px] shrink-0"
+          />
+          <div>
+            <h3 className="font-serif text-cream text-[1.3rem] leading-tight font-normal">
+              {service.name}
+            </h3>
+            <p className="text-warm mt-1.5 text-[12.5px] leading-[1.55] font-light">
+              {service.description}
+            </p>
+          </div>
         </article>
       ))}
     </div>
