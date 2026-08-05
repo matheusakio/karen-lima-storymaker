@@ -57,9 +57,7 @@ export function Footer() {
               {siteConfig.social.instagram.label}
             </a>
 
-            <span className="text-ink-soft text-sm font-light">
-              {siteConfig.contact.location}
-            </span>
+            <span className="text-ink-soft text-sm font-light">{siteConfig.contact.location}</span>
           </div>
         </div>
 

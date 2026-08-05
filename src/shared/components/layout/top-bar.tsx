@@ -141,9 +141,7 @@ export function TopBar({ activeId, progress }: TopBarProps) {
                   className="border-ink/10 flex items-baseline gap-4 border-t py-4"
                 >
                   <span className="font-mono text-gold text-[0.6rem]">{section.timecode}</span>
-                  <span className="font-display text-ink text-3xl font-light">
-                    {section.label}
-                  </span>
+                  <span className="font-display text-ink text-3xl font-light">{section.label}</span>
                 </motion.a>
               ))}
             </nav>

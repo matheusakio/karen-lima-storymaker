@@ -40,9 +40,7 @@ export function CategoryFilter({ value, onChange, countFor }: CategoryFilterProp
             className={cn(
               'h-11 shrink-0 border-b whitespace-nowrap transition-colors duration-300',
               'text-[0.65rem] tracking-[0.26em] uppercase',
-              active
-                ? 'border-ink text-ink'
-                : 'text-ink-mute hover:text-ink border-transparent',
+              active ? 'border-ink text-ink' : 'text-ink-mute hover:text-ink border-transparent',
             )}
           >
             {option.label}

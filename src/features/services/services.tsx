@@ -27,7 +27,7 @@ export function Services() {
   return (
     <section id="servicos" className="bg-night-2 py-20 md:py-28 lg:py-32">
       <div className="page">
-        <h2 className="font-serif text-[clamp(2.2rem,6vw,3.5rem)] leading-none font-light">
+        <h2 className="font-serif serif-display text-[clamp(2.2rem,6vw,3.5rem)] leading-none">
           Serviços
         </h2>
 
@@ -49,14 +49,9 @@ function ServicesMobile() {
     <div className="mt-6">
       {services.map((service) => (
         <article key={service.id} className="line-t flex items-center gap-4 py-5 last:line-b">
-          <ServiceReel
-            gallery={service.gallery}
-            className="aspect-[3/4] w-[84px] shrink-0"
-          />
+          <ServiceReel gallery={service.gallery} className="aspect-[3/4] w-[84px] shrink-0" />
           <div>
-            <h3 className="font-serif text-cream text-[1.3rem] leading-tight font-normal">
-              {service.name}
-            </h3>
+            <h3 className="font-serif text-cream text-[1.3rem] leading-tight">{service.name}</h3>
             <p className="text-warm mt-1.5 text-[12.5px] leading-[1.55] font-light">
               {service.description}
             </p>
@@ -89,7 +84,7 @@ function ServicesDesktop() {
             <span className="flex flex-col gap-2">
               <span
                 className={cn(
-                  'font-serif text-[clamp(1.6rem,3.2vw,2.2rem)] leading-[1.05] font-light transition-colors duration-400',
+                  'font-serif text-[clamp(1.6rem,3.2vw,2.2rem)] leading-[1.05] transition-colors duration-400',
                   isActive ? 'text-cream' : 'text-cream/60',
                 )}
               >

@@ -18,8 +18,7 @@ export function EmptyMedia() {
       </p>
 
       <p className="text-ink-soft/80 max-w-md text-[0.95rem] leading-[1.7] font-light">
-        Enquanto isso, o material completo está no Instagram e na pasta de
-        portfólio.
+        Enquanto isso, o material completo está no Instagram e na pasta de portfólio.
       </p>
 
       <div className="flex flex-wrap gap-3">

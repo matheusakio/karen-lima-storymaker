@@ -42,7 +42,7 @@ export function ExclusiveServices() {
               )}
 
               <div className="line-t flex items-baseline justify-between gap-4 px-5 py-5">
-                <h3 className="font-serif text-[clamp(1.15rem,2.4vw,1.55rem)] leading-tight font-light">
+                <h3 className="font-serif text-[clamp(1.15rem,2.4vw,1.55rem)] leading-tight">
                   {service.name}
                 </h3>
 
@@ -50,7 +50,7 @@ export function ExclusiveServices() {
                   <span className="label text-warm block text-[9px]">
                     {service.fromPrice ? 'a partir de' : 'sob demanda'}
                   </span>
-                  <span className="font-serif text-gold text-[clamp(1.3rem,2.6vw,1.85rem)] font-light">
+                  <span className="font-serif text-gold text-[clamp(1.3rem,2.6vw,1.85rem)]">
                     {service.fromPrice ? formatBRL(service.fromPrice) : 'Personalizado'}
                   </span>
                 </p>

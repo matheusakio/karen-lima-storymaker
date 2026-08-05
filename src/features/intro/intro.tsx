@@ -25,9 +25,7 @@ export function Intro() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <figcaption className="meta text-coffee-soft">
-              ↑ Bastidor · {STILL.location}
-            </figcaption>
+            <figcaption className="meta text-coffee-soft">↑ Bastidor · {STILL.location}</figcaption>
           </figure>
         </Rise>
 
@@ -35,8 +33,8 @@ export function Intro() {
         <div className="lg:col-span-5 lg:pr-8">
           <BurnIn>
             <p className="font-display wonk text-ink text-[1.9rem] leading-[1.15] font-light text-balance sm:text-4xl lg:text-[2.9rem]">
-              Mais do que registrar, Karen transforma movimentos, atmosferas e detalhes em
-              histórias feitas para permanecer.
+              Mais do que registrar, Karen transforma movimentos, atmosferas e detalhes em histórias
+              feitas para permanecer.
             </p>
           </BurnIn>
 

@@ -36,9 +36,7 @@ export function Testimonials() {
                 <p className="font-display text-ink text-[1.7rem] leading-[1.25] font-light italic text-balance sm:text-3xl lg:text-[2.6rem]">
                   {item.quote}
                 </p>
-                <cite className="meta text-coffee-soft mt-6 block not-italic">
-                  {item.author}
-                </cite>
+                <cite className="meta text-coffee-soft mt-6 block not-italic">{item.author}</cite>
               </blockquote>
             </BurnIn>
 

@@ -36,7 +36,12 @@ const DWELL_MS = 2400;
  * Sem `cycle`, mostra a primeira peça e deixa a fila global decidir quando
  * tocar — é o modo usado na lista do celular, onde há cinco reels visíveis.
  */
-export function ServiceReel({ gallery, cycle = false, priority = false, className }: ServiceReelProps) {
+export function ServiceReel({
+  gallery,
+  cycle = false,
+  priority = false,
+  className,
+}: ServiceReelProps) {
   const [index, setIndex] = useState(0);
   const { reducedMotion } = useMediaPolicy();
 

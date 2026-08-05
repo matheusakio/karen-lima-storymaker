@@ -25,9 +25,7 @@ type Topic = (typeof TOPICS)[number];
 export function Contact() {
   const [topic, setTopic] = useState<Topic | null>(null);
 
-  const href = buildWhatsAppLink(
-    topic ? messages.topic(topic.toLowerCase()) : messages.general,
-  );
+  const href = buildWhatsAppLink(topic ? messages.topic(topic.toLowerCase()) : messages.general);
 
   return (
     <section id="contato" className="relative min-h-[560px] overflow-hidden py-24 md:py-32">
@@ -50,7 +48,7 @@ export function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-70px' }}
           transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
-          className="font-serif max-w-[18ch] text-[clamp(2.2rem,7vw,4.2rem)] leading-[1.05] font-normal"
+          className="font-serif max-w-[18ch] serif-display text-[clamp(2.2rem,7vw,4.2rem)] leading-[1.05]"
         >
           Sua próxima história <em className="text-gold">começa aqui</em>.
         </motion.h2>

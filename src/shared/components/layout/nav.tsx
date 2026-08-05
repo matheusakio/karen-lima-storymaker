@@ -36,7 +36,18 @@ export function Nav() {
         )}
       >
         <div className="page flex h-16 items-center justify-between md:h-20">
-          <a href="#abertura" className="font-serif relative z-10 text-xl font-light md:text-2xl">
+          {/* O nome só aparece depois da abertura.
+              Na primeira tela ele já está no centro, em corpo grande — repetir
+              no canto competia com o próprio título. Ao rolar, a marca reaparece
+              e o topo deixa de ficar órfão. */}
+          <a
+            href="#abertura"
+            aria-label="Karen Lima — início"
+            className={cn(
+              'font-serif relative z-10 text-xl transition-opacity duration-500 md:text-2xl',
+              scrolled || open ? 'opacity-100' : 'pointer-events-none opacity-0',
+            )}
+          >
             Karen Lima
           </a>
 
@@ -89,7 +100,7 @@ export function Nav() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 * i + 0.05, duration: 0.4 }}
-                  className="line-t font-serif block py-4 text-3xl font-light"
+                  className="line-t font-serif block py-4 text-3xl"
                 >
                   {link.label}
                 </motion.a>

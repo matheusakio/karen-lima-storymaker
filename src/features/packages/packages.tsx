@@ -23,7 +23,7 @@ export function Packages() {
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <span className="label text-gold">Investimento</span>
-            <h2 className="font-serif mt-3 text-[clamp(2.2rem,6vw,3.5rem)] leading-none font-light">
+            <h2 className="font-serif mt-3 serif-display text-[clamp(2.2rem,6vw,3.5rem)] leading-none">
               Pacotes de cobertura
             </h2>
           </div>
@@ -53,7 +53,7 @@ export function Packages() {
                 <div className="flex items-baseline gap-2">
                   <span
                     className={cn(
-                      'font-serif text-[clamp(2.4rem,6vw,3.4rem)] leading-[0.85] font-normal',
+                      'font-serif serif-display text-[clamp(2.4rem,6vw,3.4rem)] leading-[0.85]',
                       featured ? 'text-night' : 'text-gold',
                     )}
                   >
@@ -71,7 +71,7 @@ export function Packages() {
 
                 <h3
                   className={cn(
-                    'font-serif mt-5 text-[clamp(1.5rem,3vw,1.9rem)] leading-none font-normal',
+                    'font-serif mt-5 text-[clamp(1.5rem,3vw,1.9rem)] leading-none',
                     featured ? 'text-night' : 'text-cream',
                   )}
                 >
@@ -108,7 +108,7 @@ export function Packages() {
 
                 <p
                   className={cn(
-                    'font-serif mt-6 text-[clamp(2.2rem,5.5vw,3rem)] leading-none font-normal',
+                    'font-serif mt-6 serif-display text-[clamp(2.2rem,5.5vw,3rem)] leading-none',
                     featured ? 'text-night' : 'text-cream',
                   )}
                 >

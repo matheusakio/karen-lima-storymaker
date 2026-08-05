@@ -33,10 +33,10 @@ export function About() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-70px' }}
           transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
-          className="font-serif max-w-[34ch] text-[clamp(1.35rem,3.2vw,2rem)] leading-[1.35] font-light"
+          className="font-serif max-w-[34ch] text-[clamp(1.35rem,3.2vw,2rem)] leading-[1.35]"
         >
-          Karen Lima é <em className="text-gold">filmmaker, storymaker e videomaker mobile</em>{' '}
-          em Brasília. Capta e edita vídeos para marcas, clínicas, empresas e eventos.
+          Karen Lima é <em className="text-gold">filmmaker, storymaker e videomaker mobile</em> em
+          Brasília. Capta e edita vídeos para marcas, clínicas, empresas e eventos.
         </motion.p>
 
         <div className="line-t text-warm mt-10 flex flex-wrap gap-x-7 gap-y-2 pt-5">

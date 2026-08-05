@@ -44,9 +44,7 @@ export function Behind() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <figcaption className="meta text-coffee-soft mt-2">
-              {project.durationLabel}
-            </figcaption>
+            <figcaption className="meta text-coffee-soft mt-2">{project.durationLabel}</figcaption>
           </figure>
         ))}
       </div>

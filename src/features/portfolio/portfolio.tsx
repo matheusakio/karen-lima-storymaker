@@ -44,7 +44,7 @@ export function Portfolio() {
   return (
     <section id="trabalhos" className="page py-20 md:py-28 lg:py-32">
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-        <h2 className="font-serif text-[clamp(2.2rem,6vw,3.5rem)] leading-none font-light">
+        <h2 className="font-serif serif-display text-[clamp(2.2rem,6vw,3.5rem)] leading-none">
           Trabalhos
         </h2>
 
@@ -109,7 +109,7 @@ export function Portfolio() {
                   {/* As peças dela têm tipografia queimada no rodapé do quadro,
                       então a legenda precisa de gradiente alto e respiro. */}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgb(10_8_7/0.96)] via-[rgb(10_8_7/0.72)] to-transparent px-4 pt-16 pb-5 md:px-5 md:pb-6">
-                    <h3 className="font-serif text-cream text-[clamp(1.05rem,1.9vw,1.45rem)] leading-tight font-normal">
+                    <h3 className="font-serif text-cream text-[clamp(1.05rem,1.9vw,1.45rem)] leading-tight">
                       {project.title}
                     </h3>
                     <p className="label text-cream/80 mt-1.5 text-[9.5px] font-medium">

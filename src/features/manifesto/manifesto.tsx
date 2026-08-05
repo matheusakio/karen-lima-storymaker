@@ -39,7 +39,7 @@ export function Manifesto() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 1, ease: [0.2, 1, 0.3, 1] }}
-          className="font-serif text-on-media max-w-[22ch] text-[clamp(1.5rem,4.4vw,2.5rem)] leading-[1.34] font-normal sm:max-w-[34ch]"
+          className="font-serif text-on-media max-w-[22ch] serif-display text-[clamp(1.5rem,4.4vw,2.5rem)] leading-[1.34] sm:max-w-[34ch]"
         >
           Mais do que registrar, transformo movimentos, atmosferas e detalhes em{' '}
           <em className="text-gold">histórias feitas para permanecer</em>.

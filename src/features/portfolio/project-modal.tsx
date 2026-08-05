@@ -98,7 +98,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                 {CATEGORIES[project.category]} · {project.year}
               </span>
 
-              <h2 className="font-serif text-cream mt-3 text-[clamp(1.6rem,4vw,2.6rem)] leading-tight font-normal">
+              <h2 className="font-serif text-cream mt-3 serif-display text-[clamp(1.6rem,4vw,2.6rem)] leading-tight">
                 {project.title}
               </h2>
 

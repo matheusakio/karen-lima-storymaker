@@ -23,11 +23,7 @@ export function Hero() {
     <section className="container-page pt-32 pb-16 md:pt-44 md:pb-24">
       <div className="grid items-end gap-12 lg:grid-cols-12 lg:gap-16">
         <div className="lg:col-span-7">
-          <motion.span
-            {...RISE}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="label block"
-          >
+          <motion.span {...RISE} transition={{ duration: 0.7, ease: EASE }} className="label block">
             {siteConfig.contact.location}
           </motion.span>
 

@@ -37,9 +37,7 @@ export function DurationChips({ activeIndex, onChange }: DurationChipsProps) {
               aria-label={`Pacote ${pkg.name}, ${pkg.duration}, ${pkg.price} reais`}
               className={cn(
                 'meta relative h-[52px] shrink-0 border px-6 transition-colors',
-                isActive
-                  ? 'border-ink bg-ink text-paper'
-                  : 'border-ink/20 text-coffee-soft',
+                isActive ? 'border-ink bg-ink text-paper' : 'border-ink/20 text-coffee-soft',
               )}
             >
               {pkg.hours}h

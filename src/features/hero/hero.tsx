@@ -77,7 +77,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.28, ease: EASE }}
-          className="font-serif mt-5 text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.9] font-normal"
+          className="font-serif mt-5 serif-display text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.9]"
         >
           Karen <em className="text-gold-hi">Lima</em>
         </motion.h1>
@@ -86,7 +86,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.45, ease: EASE }}
-          className="font-serif text-cream mt-6 max-w-[26ch] text-[clamp(1.05rem,2.3vw,1.5rem)] leading-[1.45] font-normal"
+          className="font-serif text-cream mt-6 max-w-[26ch] text-[clamp(1.05rem,2.3vw,1.5rem)] leading-[1.45]"
         >
           {siteConfig.tagline}
         </motion.p>

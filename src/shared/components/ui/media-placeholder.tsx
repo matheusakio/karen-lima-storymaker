@@ -23,9 +23,7 @@ export function MediaPlaceholder({ caption, className }: MediaPlaceholderProps) 
       aria-hidden="true"
     >
       <span className="bg-ink-mute/30 h-px w-8" />
-      <span className="text-[0.6rem] tracking-[0.3em] uppercase">
-        {caption ?? 'Karen Lima'}
-      </span>
+      <span className="text-[0.6rem] tracking-[0.3em] uppercase">{caption ?? 'Karen Lima'}</span>
     </div>
   );
 }

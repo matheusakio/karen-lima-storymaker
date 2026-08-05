@@ -65,13 +65,7 @@ export function RevealGroup({
   );
 }
 
-export function RevealItem({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) {
+export function RevealItem({ children, className }: { children: ReactNode; className?: string }) {
   const prefersReduced = usePrefersReducedMotion();
 
   return (

@@ -65,11 +65,7 @@ export function MediaLightbox({ item, onClose }: MediaLightboxProps) {
                     ambient
                   />
                 ) : (
-                  <img
-                    src={item.src}
-                    alt={item.title}
-                    className="h-full w-full object-cover"
-                  />
+                  <img src={item.src} alt={item.title} className="h-full w-full object-cover" />
                 )}
               </div>
 
@@ -78,9 +74,7 @@ export function MediaLightbox({ item, onClose }: MediaLightboxProps) {
                   {item.title}
                 </h2>
 
-                {item.client && (
-                  <p className="text-ink-mute text-sm font-light">{item.client}</p>
-                )}
+                {item.client && <p className="text-ink-mute text-sm font-light">{item.client}</p>}
 
                 {item.description && (
                   <>

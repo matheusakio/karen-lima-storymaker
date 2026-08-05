@@ -21,7 +21,7 @@ export function Credits() {
           <span className="h-px flex-1 bg-[rgb(240_230_216/0.14)]" />
         </div>
 
-        <p className="font-serif mt-10 text-center text-[clamp(2.5rem,8vw,4.5rem)] leading-none font-light">
+        <p className="font-serif mt-10 text-center text-[clamp(2.5rem,8vw,4.5rem)] leading-none">
           Karen Lima
         </p>
         <p className="label text-warm mt-4 text-center">{siteConfig.role}</p>

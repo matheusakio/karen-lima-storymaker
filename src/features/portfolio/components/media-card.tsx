@@ -106,9 +106,7 @@ export function MediaCard({ item, onSelect, index = 0 }: MediaCardProps) {
           {item.title}
         </h3>
 
-        {item.client && (
-          <p className="text-ink-mute text-[0.8rem] font-light">{item.client}</p>
-        )}
+        {item.client && <p className="text-ink-mute text-[0.8rem] font-light">{item.client}</p>}
       </div>
     </motion.article>
   );

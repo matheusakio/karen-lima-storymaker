@@ -19,9 +19,7 @@ export function BurnIn({ children, delay = 0, className, immediate = false }: Bu
   const { reducedMotion } = useMediaPolicy();
 
   const variants = {
-    hidden: reducedMotion
-      ? { opacity: 0 }
-      : { clipPath: 'inset(100% 0 0 0)', opacity: 0, y: 12 },
+    hidden: reducedMotion ? { opacity: 0 } : { clipPath: 'inset(100% 0 0 0)', opacity: 0, y: 12 },
     visible: {
       clipPath: 'inset(0% 0 0 0)',
       opacity: 1,

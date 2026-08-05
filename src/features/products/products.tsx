@@ -55,7 +55,9 @@ export function Products() {
                     ['Formato', product.format],
                     [
                       'Investimento',
-                      product.price !== null ? formatBRL(product.price) : (product.priceLabel ?? '—'),
+                      product.price !== null
+                        ? formatBRL(product.price)
+                        : (product.priceLabel ?? '—'),
                     ],
                   ].map(([label, value]) => (
                     <div
