@@ -42,15 +42,15 @@ export function Contact() {
         className="absolute inset-0 h-full w-full"
         objectPosition="50% 45%"
       />
-      <div className="absolute inset-0 bg-[rgb(14_11_10/0.7)]" />
+      <div className="absolute inset-0 bg-[rgb(14_11_10/0.78)]" />
 
-      <div className="page relative flex flex-col items-center text-center">
+      <div className="page text-on-media relative flex flex-col items-center text-center">
         <motion.h2
           initial={{ opacity: 0, y: 22 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-70px' }}
           transition={{ duration: 0.9, ease: [0.2, 1, 0.3, 1] }}
-          className="font-serif max-w-[18ch] text-[clamp(2.2rem,7vw,4.2rem)] leading-[1.05] font-light"
+          className="font-serif max-w-[18ch] text-[clamp(2.2rem,7vw,4.2rem)] leading-[1.05] font-normal"
         >
           Sua próxima história <em className="text-gold">começa aqui</em>.
         </motion.h2>
@@ -73,7 +73,7 @@ export function Contact() {
                   'label border px-4 py-2.5 text-[10px] transition-colors duration-300',
                   active
                     ? 'bg-cream text-night border-cream'
-                    : 'text-cream/72 hover:border-cream/60 border-[rgb(240_230_216/0.28)]',
+                    : 'text-cream hover:border-cream/60 border-[rgb(240_230_216/0.28)]',
                 )}
               >
                 {item}
@@ -91,7 +91,7 @@ export function Contact() {
           Falar pelo WhatsApp
         </a>
 
-        <p className="label text-cream/50 mt-6">{siteConfig.contact.location}</p>
+        <p className="label text-cream/80 mt-6">{siteConfig.contact.location}</p>
       </div>
     </section>
   );

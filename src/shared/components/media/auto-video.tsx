@@ -22,24 +22,24 @@ interface AutoVideoProps {
 }
 
 /**
- * Vídeo que toca sozinho, mudo e em loop.
+ * Vídeo que toca sozinho, mudo e em loop, ao entrar na tela.
  *
- * ── AUTOPLAY NO CELULAR ───────────────────────────────────────────────
- * O iOS só permite autoplay quando o elemento está `muted` E `playsinline`
- * NO MOMENTO em que o carregamento começa. Duas armadilhas aqui:
+ * ── POR QUE ISTO É MAIS COMPLICADO DO QUE PARECE ──────────────────────
  *
- * 1. O React define `muted` como PROPRIEDADE, não como atributo HTML. O
- *    Safari lê o atributo ao montar o elemento, vê um vídeo com som e recusa
- *    o autoplay. Por isso o `ref` abaixo escreve `muted` e `playsInline`
- *    imperativamente antes de qualquer tentativa de tocar.
+ * 1. ATRIBUTO, NÃO PROPRIEDADE. O React define `muted` como propriedade do
+ *    elemento. O Safari lê o ATRIBUTO ao montar, vê um vídeo com som e recusa
+ *    o autoplay. O `ref` abaixo escreve `muted` e `playsinline` à mão.
  *
- * 2. Chamar `.play()` só pelo JavaScript é menos confiável que o atributo
- *    `autoplay` declarativo. Usamos os dois.
+ * 2. `play()` PODE FALHAR SEM SER BLOQUEIO. Se ainda não há dados no buffer, a
+ *    promessa é rejeitada — e isso não significa que o navegador proibiu, só
+ *    que era cedo demais. A versão anterior tratava a primeira rejeição como
+ *    bloqueio permanente: acendia um ícone de play e deixava o vídeo invisível
+ *    para sempre. Agora cada rejeição só agenda nova tentativa nos eventos
+ *    `loadeddata` e `canplay`.
  *
- * Mesmo assim o autoplay é bloqueado no Modo de Baixo Consumo do iPhone, e
- * não há como contornar. Nesse caso o componente mostra um indicador de toque
- * discreto — o vídeo passa a tocar ao tocar na tela, e o site não parece
- * quebrado.
+ * 3. SEM ÍCONE DE PLAY. Se o sistema realmente proibir (Modo de Baixo Consumo
+ *    do iPhone), fica só a capa. Uma imagem parada e bonita passa por escolha;
+ *    um botão de play que não some passa por defeito.
  */
 export function AutoVideo({
   id,
@@ -58,8 +58,7 @@ export function AutoVideo({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { canAutoplay } = useMediaPolicy();
   const canHover = useHoverCapable();
-  const [ready, setReady] = useState(false);
-  const [blocked, setBlocked] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   const { ref, canPlay, near, forcePlay } = useVideoPool<HTMLDivElement>(id, {
     threshold,
@@ -70,10 +69,6 @@ export function AutoVideo({
   const mounted = canAutoplay && (always || near);
   const shouldPlay = canAutoplay && canPlay;
 
-  /**
-   * Garante `muted`/`playsInline` como ATRIBUTOS antes de o Safari decidir
-   * se permite autoplay. Sem isso, o vídeo fica congelado no iPhone.
-   */
   const attachVideo = useCallback((node: HTMLVideoElement | null) => {
     videoRef.current = node;
     if (!node) return;
@@ -84,35 +79,34 @@ export function AutoVideo({
     node.setAttribute('webkit-playsinline', '');
   }, []);
 
+  /** Tenta tocar. Falha aqui não é definitiva — os eventos de mídia repetem. */
+  const tryPlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    const attempt = video.play();
+    if (attempt) attempt.catch(() => undefined);
+  }, []);
+
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     if (shouldPlay) {
-      video.muted = true;
-      const attempt = video.play();
-      if (attempt) {
-        attempt.then(() => setBlocked(false)).catch(() => setBlocked(true));
-      }
+      tryPlay();
     } else {
       video.pause();
+      setPlaying(false);
     }
-  }, [shouldPlay, mounted]);
-
-  /** Toque manual: única saída quando o sistema bloqueia o autoplay. */
-  const playByTouch = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.muted = true;
-    video.play().then(() => setBlocked(false)).catch(() => undefined);
-  }, []);
+  }, [shouldPlay, mounted, tryPlay]);
 
   return (
     <div
       ref={ref}
       className={cn('relative overflow-hidden bg-black', className)}
       onMouseEnter={canHover && canAutoplay ? forcePlay : undefined}
-      onTouchStart={blocked ? playByTouch : undefined}
+      /* Último recurso: se o sistema proibiu, o primeiro toque na tela libera. */
+      onTouchStart={!playing ? tryPlay : undefined}
     >
       <img
         src={poster}
@@ -134,30 +128,21 @@ export function AutoVideo({
           muted
           loop
           playsInline
-          preload={always ? 'auto' : 'metadata'}
+          /* `auto`, não `metadata`: o elemento só é montado quando já está
+             perto da tela, e sem dados no buffer o play é rejeitado. */
+          preload="auto"
           aria-hidden="true"
           tabIndex={-1}
-          onCanPlay={() => setReady(true)}
-          onPlaying={() => setBlocked(false)}
-          onError={() => setBlocked(true)}
+          onLoadedData={() => shouldPlay && tryPlay()}
+          onCanPlay={() => shouldPlay && tryPlay()}
+          onPlaying={() => setPlaying(true)}
+          onPause={() => setPlaying(false)}
           className={cn(
             'absolute inset-0 h-full w-full object-cover transition-opacity duration-500',
-            ready && shouldPlay && !blocked ? 'opacity-100' : 'opacity-0',
+            playing ? 'opacity-100' : 'opacity-0',
           )}
           style={objectPosition ? { objectPosition } : undefined}
         />
-      )}
-
-      {/* Bloqueado pelo sistema (Modo de Baixo Consumo): sinaliza que dá toque */}
-      {blocked && (
-        <span
-          className="border-cream/50 text-cream/90 pointer-events-none absolute right-2.5 bottom-2.5 grid size-8 place-items-center rounded-full border backdrop-blur-sm"
-          aria-hidden="true"
-        >
-          <svg viewBox="0 0 24 24" className="ml-0.5 size-3 fill-current">
-            <path d="M8 5v14l11-7z" />
-          </svg>
-        </span>
       )}
     </div>
   );

@@ -6,17 +6,31 @@ interface NetworkInformation {
 }
 
 /**
- * Decide se o site pode dar autoplay em vídeo.
+ * Política de reprodução automática.
  *
- * Nega quando o usuário pediu menos movimento no sistema, quando o navegador
- * sinaliza economia de dados, ou em conexões 2g. Nesses casos o site mostra
- * poster com botão explícito de reprodução — continua funcional.
+ * Só uma coisa impede o autoplay: o usuário ter pedido menos movimento no
+ * sistema. É uma escolha explícita dele e precisa ser respeitada.
+ *
+ * ⚠️ NÃO bloqueie por `saveData`. No Android o Modo de Economia de Dados vem
+ * ligado de fábrica em muitos aparelhos, e bloquear por causa dele fazia o
+ * site inteiro aparecer congelado no celular — foi exatamente o que
+ * aconteceu. Quem entra num site de filmmaker espera ver vídeo; o cuidado com
+ * dados já está no peso dos previews (~1 MB) e no carregamento sob demanda.
+ *
+ * `lightMode` fica exposto para quem quiser usar em decisões mais brandas,
+ * como diminuir o número de vídeos simultâneos.
  */
-export function useMediaPolicy(): { canAutoplay: boolean; reducedMotion: boolean } {
+export function useMediaPolicy(): {
+  canAutoplay: boolean;
+  reducedMotion: boolean;
+  lightMode: boolean;
+} {
   const [reducedMotion, setReducedMotion] = useState(
-    () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    () =>
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   );
-  const [saveData, setSaveData] = useState(false);
+  const [lightMode, setLightMode] = useState(false);
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -28,15 +42,19 @@ export function useMediaPolicy(): { canAutoplay: boolean; reducedMotion: boolean
   useEffect(() => {
     const conn = (navigator as Navigator & { connection?: NetworkInformation }).connection;
     if (!conn) return;
+
     const evaluate = () =>
-      setSaveData(
-        Boolean(conn.saveData) || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g',
+      setLightMode(
+        Boolean(conn.saveData) ||
+          conn.effectiveType === '2g' ||
+          conn.effectiveType === 'slow-2g',
       );
+
     evaluate();
     const target = conn as unknown as EventTarget;
     target.addEventListener?.('change', evaluate);
     return () => target.removeEventListener?.('change', evaluate);
   }, []);
 
-  return { canAutoplay: !reducedMotion && !saveData, reducedMotion };
+  return { canAutoplay: !reducedMotion, reducedMotion, lightMode };
 }

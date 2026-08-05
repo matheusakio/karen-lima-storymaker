@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { projects } from '@/data/projects';
 import { AutoVideo } from '@/shared/components/media/auto-video';
@@ -11,7 +11,19 @@ const byId = new Map(projects.map((p) => [p.id, p]));
 interface ServiceReelProps {
   /** Ids do catálogo que compõem a sequência deste serviço. */
   gallery: readonly string[];
-  active: boolean;
+  /**
+   * Alterna entre as peças da sequência. Use só onde há UM reel em foco por
+   * vez — no desktop, o item sob o cursor.
+   */
+  cycle?: boolean;
+  /**
+   * Fura a fila de reprodução e toca sempre.
+   *
+   * ⚠️ Só para o reel único em foco no desktop. Ligar isso em vários reels ao
+   * mesmo tempo — como aconteceria na lista empilhada do celular — faria todos
+   * decodificarem em paralelo, que é justamente o que trava o aparelho.
+   */
+  priority?: boolean;
   className?: string;
 }
 
@@ -19,34 +31,32 @@ interface ServiceReelProps {
 const DWELL_MS = 2400;
 
 /**
- * Sequência de mídias que passa enquanto o serviço está em foco.
+ * Sequência de mídias de um serviço.
  *
- * Nada aqui fica estático: o item visível é um vídeo em loop, e a cada poucos
- * segundos entra o próximo com dissolve curto. Quando o serviço perde o foco,
- * o ciclo para e o vídeo pausa — só um toca por vez no site todo.
- *
- * Sob `prefers-reduced-motion` o ciclo não avança sozinho: fica a primeira
- * peça, parada.
+ * Sem `cycle`, mostra a primeira peça e deixa a fila global decidir quando
+ * tocar — é o modo usado na lista do celular, onde há cinco reels visíveis.
  */
-export function ServiceReel({ gallery, active, className }: ServiceReelProps) {
+export function ServiceReel({ gallery, cycle = false, priority = false, className }: ServiceReelProps) {
   const [index, setIndex] = useState(0);
   const { reducedMotion } = useMediaPolicy();
 
-  const items = gallery.map((id) => byId.get(id)).filter((p): p is NonNullable<typeof p> => !!p);
+  // `gallery` é uma constante do módulo, então a lista resolvida também pode
+  // ser estável — sem isto o array era recriado a cada render e reiniciava o
+  // efeito do temporizador.
+  const items = useMemo(
+    () => gallery.map((id) => byId.get(id)).filter((p): p is NonNullable<typeof p> => !!p),
+    [gallery],
+  );
 
   useEffect(() => {
-    if (!active || reducedMotion || items.length < 2) return;
-    const timer = window.setInterval(
-      () => setIndex((i) => (i + 1) % items.length),
-      DWELL_MS,
-    );
+    if (!cycle || reducedMotion || items.length < 2) return;
+    const timer = window.setInterval(() => setIndex((i) => (i + 1) % items.length), DWELL_MS);
     return () => window.clearInterval(timer);
-  }, [active, reducedMotion, items.length]);
+  }, [cycle, reducedMotion, items.length]);
 
-  // ao sair de foco, volta para o começo da sequência
   useEffect(() => {
-    if (!active) setIndex(0);
-  }, [active]);
+    if (!cycle) setIndex(0);
+  }, [cycle]);
 
   if (items.length === 0) return null;
   const current = items[index] ?? items[0]!;
@@ -71,13 +81,12 @@ export function ServiceReel({ gallery, active, className }: ServiceReelProps) {
             sizes="(max-width: 768px) 100vw, 320px"
             alt={current.title}
             className="h-full w-full"
-            always={active}
+            always={priority}
           />
         </motion.div>
       </AnimatePresence>
 
-      {/* marcadores de posição na sequência */}
-      {items.length > 1 && active && (
+      {cycle && items.length > 1 && (
         <div className="absolute bottom-2 left-2 flex gap-1" aria-hidden="true">
           {items.map((item, i) => (
             <span

@@ -36,12 +36,18 @@ export function Hero() {
     node.setAttribute('webkit-playsinline', '');
   }, []);
 
-  useEffect(() => {
+  /** Falha aqui não é definitiva: os eventos de mídia repetem a tentativa. */
+  const tryPlay = useCallback(() => {
     const video = videoRef.current;
-    if (!video || !canAutoplay) return;
+    if (!video) return;
     video.muted = true;
-    video.play().catch(() => setVisible(false));
-  }, [canAutoplay]);
+    const attempt = video.play();
+    if (attempt) attempt.catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
+    if (canAutoplay) tryPlay();
+  }, [canAutoplay, tryPlay]);
 
   return (
     <section id="abertura" className="relative h-dvh min-h-[560px] overflow-hidden bg-black">
@@ -67,8 +73,10 @@ export function Hero() {
           preload="auto"
           aria-hidden="true"
           tabIndex={-1}
+          onLoadedData={tryPlay}
+          onCanPlay={tryPlay}
           onPlaying={() => setVisible(true)}
-          onError={() => setVisible(false)}
+          onPause={() => setVisible(false)}
           className={cn(
             'absolute inset-0 h-full w-full object-cover transition-opacity duration-700 [object-position:50%_26%]',
             visible ? 'opacity-100' : 'opacity-0',
@@ -83,7 +91,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
-          className="label text-cream/80"
+          className="label text-cream font-medium"
         >
           {siteConfig.role}
         </motion.p>
@@ -92,7 +100,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.28, ease: EASE }}
-          className="font-serif mt-5 text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.9] font-light"
+          className="font-serif mt-5 text-[clamp(3.2rem,11vw,7.5rem)] leading-[0.9] font-normal"
         >
           Karen <em className="text-gold-hi">Lima</em>
         </motion.h1>
@@ -101,7 +109,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.45, ease: EASE }}
-          className="font-serif text-cream/95 mt-6 max-w-[26ch] text-[clamp(1rem,2.2vw,1.4rem)] leading-[1.45] font-light"
+          className="font-serif text-cream mt-6 max-w-[26ch] text-[clamp(1.05rem,2.3vw,1.5rem)] leading-[1.45] font-normal"
         >
           {siteConfig.tagline}
         </motion.p>

@@ -75,6 +75,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   poster={project.posterFallback}
                   controls
                   autoPlay={canAutoplay}
+                  loop
                   playsInline
                   preload="metadata"
                   className="h-full w-full object-contain"

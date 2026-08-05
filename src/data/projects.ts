@@ -26,21 +26,6 @@ export const CATEGORIES = {
 
 export type Category = keyof typeof CATEGORIES;
 
-/**
- * Altura do módulo na cascata do portfólio.
- *
- *   'square' → 1:1     bloco curto, dá respiro
- *   'wide'   → 4:5     retrato baixo
- *   'mid'    → 3:4     intermediário
- *   'tall'   → 9:16    proporção nativa das peças dela
- *   'xtall'  → 2:3.4   o mais alto, para ancorar uma coluna
- *
- * A variação é estética: todo o acervo é vertical e o recorte acontece no
- * card. Distribua os formatos para nenhuma coluna ficar monótona — com dois
- * formatos só, a cascata voltava a parecer grade.
- */
-export type Shape = 'square' | 'wide' | 'mid' | 'tall' | 'xtall';
-
 export interface Project {
   id: string;
   title: string;
@@ -54,7 +39,6 @@ export interface Project {
   posterFallback: string;
   previewVideo: string;
   fullVideo: string;
-  shape: Shape;
   durationLabel: string;
   description: string | null;
 }
@@ -75,6 +59,10 @@ const media = (id: string) => ({
 });
 
 /**
+ * A ALTURA DE CADA CARD NÃO MORA AQUI.
+ * Ela vem da fileira em que a peça cai — ver `features/portfolio/layout.ts`.
+ * Reordenar esta lista muda a composição; é o jeito de ajustar o ritmo.
+ *
  * TÍTULOS
  *
  * Sempre que a peça tem um título gravado por ela na tela, é ele que vale —
@@ -96,7 +84,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Direção criativa', 'Captação', 'Edição'],
     ...media('v067'),
-    shape: 'tall',
     durationLabel: '00:34',
     description:
       'Filme de experiência: natureza, pousada e prática, costurados pelas palavras dela — sou, experiência, emocionante.',
@@ -110,7 +97,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Cobertura', 'Montagem', 'Tipografia'],
     ...media('v060'),
-    shape: 'square',
     durationLabel: '00:32',
     description: 'Três salas acompanhadas em sequência, com cartela abrindo cada uma.',
   },
@@ -123,7 +109,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Cobertura', 'Edição'],
     ...media('v001'),
-    shape: 'mid',
     durationLabel: '00:42',
     description: null,
   },
@@ -136,7 +121,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Cobertura', 'Edição', 'Direção criativa'],
     ...media('v069'),
-    shape: 'xtall',
     durationLabel: '00:30',
     description: 'Encerramento com texto autoral sobre a paisagem.',
   },
@@ -149,7 +133,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Cobertura', 'Edição'],
     ...media('v064'),
-    shape: 'wide',
     durationLabel: '00:34',
     description: null,
   },
@@ -162,7 +145,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Captação', 'Direção criativa', 'Edição'],
     ...media('v071'),
-    shape: 'tall',
     durationLabel: '00:16',
     description: null,
   },
@@ -175,7 +157,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Captação', 'Edição'],
     ...media('v057'),
-    shape: 'square',
     durationLabel: '00:19',
     description: 'Institucional de clínica: espaço, luz e acabamento.',
   },
@@ -188,7 +169,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Cobertura', 'Edição', 'Legendagem'],
     ...media('v065'),
-    shape: 'mid',
     durationLabel: '00:22',
     description: null,
   },
@@ -201,7 +181,6 @@ export const projects: readonly Project[] = [
     location: 'Brasília — DF',
     services: ['Cobertura', 'Edição'],
     ...media('v061'),
-    shape: 'wide',
     durationLabel: '00:21',
     description: null,
   },
